@@ -7,6 +7,7 @@
     "ar": "تحديث بياناتي الشخصية",
     "en": "Update my personal data"
   },
+  "icon": "idcard",
   "fields": [
     {
       "key": "field",

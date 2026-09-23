@@ -8,6 +8,8 @@ import { ApiError, getLanguages, setApiBase } from '@usp/api-client';
 import { I18nProvider } from '@usp/i18n';
 import { AuthProvider, useAuth } from '../src/platform/auth/auth';
 import { LoginScreen } from '../src/platform/auth/LoginScreen';
+import { IslandProvider } from '../src/shared/kit';
+import { PreferencesProvider } from '../src/platform/me/preferences';
 
 setApiBase((Constants.expoConfig?.extra?.apiUrl as string | undefined) ?? 'http://localhost:8080');
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: (n, e) => !(e instanceof ApiError && e.status < 500) && n < 2 } } });
@@ -23,11 +25,19 @@ function Gate() {
   if (state.status === 'loading') return null;
   if (state.status === 'signedOut') return <LoginScreen />;
   return (
-    <Stack screenOptions={{ headerBackButtonDisplayMode: 'minimal' }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="request/[id]" options={{ title: '' }} />
-      <Stack.Screen name="service/[id]" options={{ title: '' }} />
-    </Stack>
+    <PreferencesProvider>
+      <IslandProvider>
+        {/* Screens draw the prototype's own page chrome (back · emblem · action, large title). */}
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="request/[id]" />
+          <Stack.Screen name="resubmit/[id]" />
+          <Stack.Screen name="service/[id]" />
+          <Stack.Screen name="domain/[code]" />
+          <Stack.Screen name="settings" />
+        </Stack>
+      </IslandProvider>
+    </PreferencesProvider>
   );
 }
 

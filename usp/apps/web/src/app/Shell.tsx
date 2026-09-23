@@ -5,14 +5,17 @@ import type React from 'react';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { Link, ScrollRestoration, useLocation, useNavigate, useOutlet } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { catalogServices, getModules, getTasks, searchServices, type FeatureStatus, type SessionView } from '@usp/api-client';
+import { getTasks, searchCatalog, type CatalogService, type SessionView } from '@usp/api-client';
 import { useI18n } from '@usp/i18n';
 import {
   AnimatePresence, Avatar, BottomSheet, EnterCtx, I, IslandProvider, LayoutGroup, MotionConfig, Page, SPRING, SearchField, UIProvider,
   motion, useMotionValueEvent, useReducedMotion, useScrollY, type IconName, type NavDir,
 } from '@usp/ui-web';
 import emblem from '@usp/ui-web/emblem.png';
-import { modules } from './registry';
+import { useCatalog } from '../platform/catalog/queries';
+import { useStatusText } from '../platform/catalog/parts';
+import { startPath } from './links';
+import { usePreferencesApplied } from './preferences';
 
 const MotionLink = motion.create(Link);
 
@@ -29,7 +32,7 @@ const section = (path: string) => path.split('/').filter(Boolean)[0] ?? '';
 function tabOf(path: string) {
   const a = section(path);
   if (a === 'mydata' || a === 'settings' || a === 'me') return 'me';
-  if (a === 'documents') return 'requests';
+  if (a === 'documents' || a === 'new') return 'requests';
   return a;
 }
 
@@ -124,24 +127,22 @@ function TabBar({ onSearch }: { onSearch: () => void }) {
   );
 }
 
-/** The search island: services of the catalogue; an available one opens its page, others their domain. */
+/** The search island (prototype ui/SearchSheet.tsx): the catalogue; a startable service opens, any other its domain. */
 function SearchSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { t, text } = useI18n(); const navigate = useNavigate(); const [q, setQ] = useState('');
-  const catalog = useQuery({ queryKey: ['modules'], queryFn: getModules, enabled: open, staleTime: 300_000 });
+  const { t, text, plural } = useI18n(); const navigate = useNavigate(); const status = useStatusText(); const [q, setQ] = useState('');
+  const catalog = useCatalog(open);
   useEffect(() => { if (!open) setQ(''); }, [open]);
-  const services = catalogServices(catalog.data ?? []); const n = q.trim();
-  const hits = searchServices(catalog.data ?? [], q);
-  const codedPath = (serviceId: string) => modules.flatMap((m) => m.routes).find((r) => r.serviceId === serviceId)?.path;
-  const go = (serviceId: string, available: boolean) => { onClose(); navigate(available ? codedPath(serviceId) ?? `/services/${serviceId}` : '/services'); };
-  const statusText = (s: FeatureStatus) => s === 'AVAILABLE' ? t('services.available') : s === 'LATER' ? t('services.later') : `${t('services.soon')} · ${t('services.wave')} ${s === 'WAVE_2' ? 2 : 3}`;
+  const services = catalog.data?.services ?? []; const n = q.trim();
+  const hits = searchCatalog(services, q, 8);
+  const go = (s: CatalogService) => { onClose(); navigate(s.startable ? startPath(s.id) : `/services/${s.domain}`); };
   return (
     <BottomSheet open={open} onClose={onClose} title={t('search.island')} tall>
       <SearchField id="uspq" value={q} onChange={setQ} placeholder={t('search.placeholder')} autoFocus />
       <div className="lb-hits">
-        {!n ? <p className="lb-muted">{t('search.hint', { n: services.length })}</p> : hits.length === 0 ? <p className="lb-muted">{t('search.noHits')}</p> : hits.map((s) => (
-          <button key={s.key} type="button" className="cell" onClick={() => go(s.serviceId, s.status === 'AVAILABLE')}>
-            <span className={`cell-lead ${s.status === 'AVAILABLE' ? '' : 'plain'}`}><I.grid /></span>
-            <span className="cell-main"><span className="cell-title">{text(s.name)}</span><span className="cell-sub">{statusText(s.status)}</span></span>
+        {!n ? <p className="lb-muted">{plural('search.hint', services.length)}</p> : hits.length === 0 ? <p className="lb-muted">{t('search.noHits')}</p> : hits.map((s) => (
+          <button key={s.id} type="button" className="cell" onClick={() => go(s)}>
+            <span className={`cell-lead ${s.startable ? '' : 'plain'}`}><I.grid /></span>
+            <span className="cell-main"><span className="cell-title">{text(s.name)}</span><span className="cell-sub">{status(s)}</span></span>
             <I.chev className="chev dirchev" />
           </button>
         ))}
@@ -152,6 +153,7 @@ function SearchSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
 
 /** The signed-in frame around every screen except sign-in and public verification. */
 export function Shell({ session }: { session: SessionView }) {
+  usePreferencesApplied();
   const { text } = useI18n(); const [search, setSearch] = useState(false); const openSearch = () => setSearch(true);
   return (
     <MotionConfig reducedMotion="user">

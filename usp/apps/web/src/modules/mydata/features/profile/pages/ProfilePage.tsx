@@ -1,32 +1,33 @@
-import { PageChrome } from '@usp/ui-web';
-import { Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
-import { ApiError, getProfile } from '@usp/api-client';
+/* My data (prototype screens/Me.tsx MyData): contact and bank details (masked by the server) that open the services
+   to change them, then what the system of record says — line manager, position, group, employee number. */
+import { Link, useNavigate } from 'react-router';
+import { ApiError } from '@usp/api-client';
 import { useI18n } from '@usp/i18n';
+import { Cell, Empty, Group, I, PageChrome } from '@usp/ui-web';
+import { useProfile } from '../queries';
 
-const hijri = (iso: string) => new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${iso}T12:00:00`));
-const greg = (iso: string, ar: boolean) => new Intl.DateTimeFormat(ar ? 'ar-SA-u-ca-gregory-nu-latn' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${iso}T12:00:00`));
-
-/** mydata.profile (ME-01): the employee's own data, read live from SAP on every visit and never stored by the portal. */
 export default function ProfilePage() {
-  const { t, text, lang } = useI18n();
-  const q = useQuery({ queryKey: ['profile'], queryFn: getProfile, staleTime: 0, gcTime: 0 });
+  const { t, text } = useI18n(); const navigate = useNavigate(); const q = useProfile(); const p = q.data;
+  const join = (...parts: (string | null | undefined)[]) => parts.filter(Boolean).join(' · ') || '—';
   return (
-    <PageChrome title={text({ ar: 'ملفي', en: 'My profile' })} root end={<Link className="lb-link" to="/settings">{t('common.settings')}</Link>}>
-      <div className="stack">
-      {q.isPending ? <p className="muted">…</p> : null}
-      {q.isError ? <p className="error" role="alert">{text((q.error as ApiError).title ?? { ar: 'تعذّر قراءة البيانات', en: 'Could not load your data' })}</p> : null}
-      {q.data ? (
-        <div className="card">
-          <dl className="fields">
-            <div><dt>{t('common.employeeNo')}</dt><dd className="mono">{q.data.employeeNo}</dd></div>
-            <div><dt>{t('common.arabicName')}</dt><dd>{q.data.name.ar || '—'}</dd></div>
-            <div><dt>{t('common.englishName')}</dt><dd>{q.data.name.en || '—'}</dd></div>
-            <div><dt>{t('common.dateOfBirth')}</dt><dd>{q.data.dateOfBirth ? <>{greg(q.data.dateOfBirth, lang === 'ar')}<br /><small className="muted">{hijri(q.data.dateOfBirth)}</small></> : '—'}</dd></div>
-          </dl>
-          <small className="muted">{t('common.liveFromSap')}</small>
-        </div>
+    <PageChrome title={t('me.data')} sub={t('me.dataSub')} back="/me" end={<Link className="btn soft sm" to="/new/MD-01"><I.pen />{t('me.update')}</Link>}>
+      {q.isError ? <div className="lb-empty"><Empty icon="person" title={q.error instanceof ApiError && q.error.title ? text(q.error.title) : t('me.unavailable')} /></div> : null}
+      {p ? (
+        <>
+          <Group>
+            <Cell icon="person" tone="plain" title={t('me.mobile')} value={<span className="ltr">{p.mobile ?? '—'}</span>} onClick={() => navigate('/new/MD-01')} />
+            <Cell icon="letter" tone="plain" title={t('me.email')} value={<span className="ltr">{p.email ?? '—'}</span>} onClick={() => navigate('/new/MD-01')} />
+            <Cell icon="wallet" tone="plain" title={t('me.bank')} value={<span className="ltr">{p.bank?.iban ?? '—'}</span>} onClick={() => navigate('/new/MD-02')} />
+          </Group>
+          <div className="lb-head sm"><h2>{t('me.fromSap')}</h2></div>
+          <Group>
+            <Cell icon="team" tone="plain" title={t('me.manager')} sub={p.manager ? join(text(p.manager.name), text(p.manager.title)) : '—'} chevron={false} />
+            <Cell icon="grid" tone="plain" title={t('me.position')} sub={join(text(p.title), p.positionId, text(p.unit))} chevron={false} />
+            <Cell icon="idcard" tone="plain" title={t('me.group')} sub={join(text(p.group), text(p.subgroup), text(p.location))} chevron={false} />
+            <Cell icon="idcard" tone="plain" title={t('me.employeeNo')} value={<span className="mono">{t('me.cardNo', { n: p.employeeNo })}</span>} chevron={false} />
+          </Group>
+        </>
       ) : null}
-    </div></PageChrome>
+    </PageChrome>
   );
 }

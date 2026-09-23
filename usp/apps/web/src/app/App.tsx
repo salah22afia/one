@@ -8,6 +8,7 @@ import { ChangePassword } from '@usp/ui-web';
 import { modules } from './registry';
 import { platformRoutes, notFoundRoute } from '../platform/routes';
 import { Shell } from './Shell';
+import { cachedPreferences } from './preferences';
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: (n, e) => !(e instanceof ApiError && e.status < 500) && n < 2 } } });
 const applyDir = (lang: string, dir: 'rtl' | 'ltr') => { document.documentElement.lang = lang; document.documentElement.dir = dir; };
@@ -31,6 +32,7 @@ function PasswordFirst() {
 
 const LoginPage = lazy(() => import('../platform/auth/LoginPage'));
 const VerifyPage = lazy(() => import('../platform/verify/VerifyPage'));
+const CardVerifyPage = lazy(() => import('../platform/verify/CardVerifyPage'));
 
 const routes: RouteObject[] = [
   ...platformRoutes,
@@ -39,7 +41,8 @@ const routes: RouteObject[] = [
 ];
 const router = createBrowserRouter([
   { path: '/login', element: <Suspense fallback={null}><LoginPage /></Suspense> },
-  // Public: anyone holding a document can check it without signing in.
+  // Public: anyone holding a document or shown a digital card can check it without signing in.
+  { path: '/verify/card/:code', element: <main className="main"><Suspense fallback={null}><CardVerifyPage /></Suspense></main> },
   { path: '/verify/:code?', element: <main className="main"><Suspense fallback={null}><VerifyPage /></Suspense></main> },
   { Component: SignedIn, children: routes },
 ]);
@@ -47,7 +50,7 @@ const router = createBrowserRouter([
 /** The administrator's languages (settings in PostgreSQL); the built-in list until they arrive. */
 function WithLanguages({ children }: { children: React.ReactNode }) {
   const languages = useQuery({ queryKey: ['languages'], queryFn: getLanguages, staleTime: Infinity });
-  return <I18nProvider languages={languages.data} onChange={applyDir}>{children}</I18nProvider>;
+  return <I18nProvider languages={languages.data} initial={cachedPreferences()?.language ?? undefined} onChange={applyDir}>{children}</I18nProvider>;
 }
 
 export function App() {

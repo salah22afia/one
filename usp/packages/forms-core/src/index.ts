@@ -24,12 +24,23 @@ export interface AgentRule {
   kind: 'lineManager' | 'orgHead' | 'chain' | 'positions' | 'pool' | 'requester' | 'field' | 'role';
   level?: string; upTo?: string; positionIds?: string[]; quorum?: 'any' | 'all'; unitId?: string; field?: string; role?: string;
 }
+/** What the holder of a step may decide. */
+export type Decision = 'approve' | 'return' | 'reject' | 'done' | 'receive';
 export interface StepDef {
   key: string; title: LocalizedText; mode: 'approve' | 'notify' | 'fulfil' | 'receipt' | 'system' | 'decision' | 'wait';
   agent?: AgentRule; slaHours?: number; when?: Rule; operation?: string;
+  /** Allowed decisions; omitted = the mode's defaults (DEFAULT_DECISIONS). Must include the mode's first decision. */
+  decisions?: Decision[];
 }
+/** Everything a step of each human mode may allow, and the prototype's defaults (mirrors the Java ServiceDefinition). */
+export const DECISIONS: Partial<Record<StepDef['mode'], Decision[]>> = { approve: ['approve', 'return', 'reject'], fulfil: ['done', 'return', 'reject'], receipt: ['receive'] };
+export const DEFAULT_DECISIONS: Partial<Record<StepDef['mode'], Decision[]>> = { approve: ['approve', 'return', 'reject'], fulfil: ['done'], receipt: ['receive'] };
 export interface ServiceDefinition {
   id: string; module: string; feature: string; version: number; name: LocalizedText;
+  /** Icon of the service on request rows (a UI-kit icon name). */
+  icon?: string;
+  /** When the requester may withdraw: before anyone else decided (default) or never. */
+  withdraw?: 'beforeDecision' | 'never';
   fields: FieldDef[];
   form: { pages: { title: LocalizedText; fields: string[] }[] };
   rules: RuleDef[];

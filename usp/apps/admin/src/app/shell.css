@@ -14,3 +14,6 @@
 .adm-me .num { font-size: var(--t-cap); color: var(--fg-3); }
 .lb-side button.side-item { width: 100%; text-align: start; }
 .lb-shell .lb-side { overflow-y: auto; scrollbar-width: none; }
+/* A labelled group of chips inside an ed-row (icon and colour pickers): styled as the row's labels, but a group, so the
+   caption does not act as a click target for its first chip. */
+.ed-row .ed-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; font-size: var(--t-cap); font-weight: 700; color: var(--fg-3); }

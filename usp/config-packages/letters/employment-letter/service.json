@@ -7,6 +7,7 @@
     "ar": "خطاب تعريف",
     "en": "Employment letter"
   },
+  "icon": "letter",
   "fields": [
     {
       "key": "to",

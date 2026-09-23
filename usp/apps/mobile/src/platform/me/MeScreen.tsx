@@ -1,35 +1,29 @@
-import { Text, View } from 'react-native';
-import { Link, type Href } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
-import { ApiError, getProfile } from '@usp/api-client';
+/* "Me" on the phone (prototype screens/Me.tsx, C-UX-87): the digital card, then a grid of widgets that open their
+   screens — each business module adds its own (My data, documents, balances, pay, family…), and Settings closes it. */
+import { useState } from 'react';
+import { Pressable, View } from 'react-native';
+import { router, type Href } from 'expo-router';
 import { useI18n } from '@usp/i18n';
 import { modules } from '../../registry';
-import { useAuth, useMeName } from '../auth/auth';
-import { Button, Card, Screen, colors } from '../../shared/ui';
+import { MeTile } from '../../shared/kit';
+import { I } from '../../shared/icons';
+import { useTheme } from '../../shared/theme';
+import { Screen } from '../../shared/ui';
+import { useMeName } from '../auth/auth';
+import { IdCard } from './IdCard';
 
-/** "Me": the employee's data read live from SAP (never stored), the screens modules contribute, and sign-out. */
+const WIDGETS = modules.flatMap((m) => m.meWidgets ?? []).sort((a, b) => a.order - b.order);
+
 export default function MeScreen() {
-  const { t, text } = useI18n();
-  const { signOut } = useAuth(); const me = useMeName();
-  const q = useQuery({ queryKey: ['profile'], queryFn: getProfile, staleTime: 0, gcTime: 0 });
-  const screens = modules.flatMap((m) => m.screens).filter((s) => !s.serviceId);
-  const row = (label: string, value: string) => (
-    <View key={label}><Text style={{ color: colors.mute, fontSize: 12 }}>{label}</Text><Text style={{ fontWeight: '700' }}>{value || '—'}</Text></View>
-  );
+  const { t } = useI18n(); const th = useTheme(); const me = useMeName(); const [flipped, setFlipped] = useState(false);
   return (
-    <Screen title={t('tabs.me')} root person={me}>
-      <Card>
-        {q.isError ? <Text style={{ color: colors.danger }}>{text((q.error as ApiError).title ?? { ar: 'تعذّر قراءة البيانات', en: 'Could not load your data' })}</Text> : null}
-        {q.data ? [
-          row(t('common.employeeNo'), q.data.employeeNo),
-          row(t('common.arabicName'), q.data.name.ar ?? ''),
-          row(t('common.englishName'), q.data.name.en ?? ''),
-          row(t('common.dateOfBirth'), q.data.dateOfBirth ?? ''),
-        ] : null}
-        <Text style={{ color: colors.mute, fontSize: 12 }}>{t('common.liveFromSap')}</Text>
-      </Card>
-      {screens.map((s) => <Link key={s.href} href={s.href as Href}>{text(s.name)}</Link>)}
-      <Button kind="danger" title={t('common.signOut')} onPress={() => { void signOut(); }} />
+    <Screen title={t('me.title')} root person={me}
+      end={<Pressable onPress={() => router.push('/settings' as Href)} accessibilityRole="button" accessibilityLabel={t('me.settings')} hitSlop={8}><I.gear size={24} color={th.tint} /></Pressable>}>
+      <IdCard flipped={flipped} onFlip={() => setFlipped((f) => !f)} />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 10 }}>
+        {WIDGETS.map((w) => <w.Component key={w.key} />)}
+        <MeTile icon="gear" title={t('me.settings')} sub={t('me.settingsSub')} onPress={() => router.push('/settings' as Href)} />
+      </View>
     </Screen>
   );
 }

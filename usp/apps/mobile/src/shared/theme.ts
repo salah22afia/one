@@ -1,3 +1,4 @@
+import { createContext, useContext } from 'react';
 import { useColorScheme } from 'react-native';
 
 /** The prototype's design tokens (tokens.css v0.2 "identity"), light and dark, for React Native. Keep in step with @usp/ui-web. */
@@ -25,8 +26,21 @@ const dark: Theme = {
   dark: true,
 };
 
+/**
+ * The person's display preferences (Me › Settings): appearance (auto follows the device) and text scale (the
+ * prototype's text sizes: 100%, 108%, 118%). Provided once signed in; the defaults before that.
+ */
+export interface Display { appearance: 'auto' | 'light' | 'dark'; scale: number }
+export const DisplayContext = createContext<Display>({ appearance: 'auto', scale: 1 });
+export const TEXT_SCALE = { normal: 1, large: 1.08, xl: 1.18 } as const;
+
 export function useTheme(): Theme {
-  return useColorScheme() === 'dark' ? dark : light;
+  const device = useColorScheme(); const { appearance } = useContext(DisplayContext);
+  return (appearance === 'auto' ? device === 'dark' : appearance === 'dark') ? dark : light;
+}
+
+export function useTextScale(): number {
+  return useContext(DisplayContext).scale;
 }
 
 /** Type scale (rem × 16) and radii of the prototype. */

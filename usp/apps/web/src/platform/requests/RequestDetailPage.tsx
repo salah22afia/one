@@ -1,110 +1,153 @@
-import { PageChrome } from '@usp/ui-web';
+/* The request page (prototype screens/Requests.tsx RequestPage, C-UX-85): a status card first (status, stage n of m,
+   who has it since when, expected), then the documents, what was submitted, the events and the full route, and the
+   requester's actions (resubmit a returned request, withdraw one nobody has decided on yet). */
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiError, decide, getDocumentPdf, getRequest, type DecisionAction, type StepDetail } from '@usp/api-client';
+import { useNavigate, useParams } from 'react-router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ApiError, isStale, withdrawRequest, type DocumentView, type RequestDetail } from '@usp/api-client';
 import { useI18n } from '@usp/i18n';
-import { StatusPill } from '../../shared/StatusPill';
-import { fmtDate } from '../../shared/format';
+import {
+  AnimatePresence, Avatar, BottomSheet, Empty, Group, I, Nb, PageChrome, Pill, Ring, SPRING, Seal, motion, shortName, useIntroSkip, useIsland, useNow, useUI,
+} from '@usp/ui-web';
+import { useSession } from '../../app/session';
+import { DocumentViewer } from '../documents/DocumentViewer';
+import { RouteRail, Stepper, progressOf, useExpected, useStepWho } from './parts';
+import { useRequest } from './queries';
 
-/** Request detail: data, timeline with who is on each step now, decisions for the current assignee, documents, audit. */
+const HERO_TONE: Record<string, string> = { returned: 'warn', rejected: 'muted', withdrawn: 'muted', completed: 'done', in_review: 'live' };
+const RING_COLOR: Record<string, string> = { warn: 'var(--gold)', muted: 'var(--fg-4)', done: 'var(--green)', live: 'var(--green)' };
+
 export default function RequestDetailPage() {
   const { id = '' } = useParams();
-  const { text, lang } = useI18n();
-  const q = useQuery({ queryKey: ['request', id], queryFn: () => getRequest(id) });
+  const { t } = useI18n();
+  const q = useRequest(id);
   if (q.isPending) return null;
-  if (q.isError) return <p className="error">{text((q.error as ApiError).title ?? { ar: 'تعذّر فتح الطلب', en: 'Could not open the request' })}</p>;
-  const { request: r, fields, steps, documents, audit } = q.data;
-  const mine = steps.find((s) => s.mine);
+  if (q.isError) {
+    const gone = q.error instanceof ApiError && (q.error.status === 404 || q.error.status === 403);
+    return (
+      <PageChrome title={t('requests.title')} back="/requests">
+        <div className="lb-empty"><Empty icon="doc" title={gone ? t('requests.notFound') : t('documents.unavailable')} sub={gone ? t('requests.notFoundSub') : undefined} /></div>
+      </PageChrome>
+    );
+  }
+  return <RequestView d={q.data} />;
+}
+
+function RequestView({ d }: { d: RequestDetail }) {
+  const { t, text, date, ago } = useI18n(); const now = useNow(); const { desk } = useUI(); const reduce = useIntroSkip(); const session = useSession();
+  const navigate = useNavigate(); const who = useStepWho(); const expected = useExpected();
+  const [doc, setDoc] = useState<DocumentView | null>(null); const [allEvents, setAllEvents] = useState(false); const [route, setRoute] = useState(false);
+  const r = d.request; const status = r.status;
+  const { steps, cur, idx, doneN } = progressOf(d.steps, status);
+  const mine = session?.personId === r.requester.id;
+  const heroTone = HERO_TONE[status] ?? 'live';
+  const holderPerson = cur?.status === 'current' && cur.assignees.length === 1 ? cur.assignees[0] : undefined;
+  const holder = cur?.status === 'current' ? (holderPerson ? shortName(text(holderPerson.name)) : who(cur)) : '';
+  const exp = cur?.status === 'current' ? expected(cur.dueAt, now) : '';
+  const returnedNote = d.steps.find((s) => s.status === 'returned')?.note;
+  const events = d.audit.slice().reverse(); const shownEvents = allEvents ? events : events.slice(0, 2);
+  const valued = d.fields.filter((f) => f.value !== undefined && f.value !== null && f.value !== '');
+  const docsText = d.documents.length === 1 ? t('requests.docOne') : t('requests.docN', { n: d.documents.length });
   return (
-    <PageChrome title={text(r.serviceName)} sub={`${r.id} · ${text(r.requester.name)} · ${fmtDate(r.createdAt, lang, true)}`} back="/requests" end={<StatusPill status={r.status} />}>
-    <div className="stack">
-
-      {mine ? <DecisionPanel step={mine} requestId={r.id} /> : null}
-
-      <div className="card">
-        <b>{text({ ar: 'بيانات الطلب', en: 'Request data' })}</b>
-        <dl className="fields">{fields.map((f) => <div key={f.key}><dt>{text(f.label)}</dt><dd>{text(f.display)}</dd></div>)}</dl>
-      </div>
-
-      {documents.length ? (
-        <div className="card">
-          <b>{text({ ar: 'المستندات الصادرة', en: 'Issued documents' })}</b>
-          {documents.map((d) => (
-            <div key={d.id} className="hrow">
-              <span><b>{text(d.title)}</b><small className="mono muted">{d.number} · {d.verifyCode}</small></span>
-              <span className="actions">
-                <Link className="btn" to={`/documents/${d.id}`}>{text({ ar: 'عرض وطباعة', en: 'View & print' })}</Link>
-                <PdfButton id={d.id} name={d.number} />
+    <PageChrome title={text(r.serviceName)} sub={`${t('requests.number')} ${r.id}`} back="/requests">
+      <motion.section className={`rqh ${heroTone}`} initial={reduce ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={SPRING.soft} aria-label={t(`requests.hero.${status}`)}>
+        <div className="rqh-top">
+          <span className="rqh-ring">
+            <Ring value={status === 'completed' ? steps.length : doneN} max={Math.max(1, steps.length)} size={58} stroke={6} color={RING_COLOR[heroTone]} track="var(--bg-inset-2)">
+              <b className="num">{status === 'completed' ? <I.check /> : `${doneN}/${steps.length}`}</b>
+            </Ring>
+          </span>
+          <span className="rqh-txt">
+            <b>{t(`requests.hero.${status}`)}</b>
+            <span>{status === 'in_review' && cur ? <>{t('requests.stageOf', { n: idx + 1, m: steps.length })} · {text(cur.title)}</>
+              : status === 'returned' ? (returnedNote || t('status.returned'))
+              : status === 'completed' ? `${date(r.updatedAt, { day: 'numeric', month: 'long' })}${d.documents.length ? ` · ${docsText}` : ''}`
+              : date(r.updatedAt, { day: 'numeric', month: 'long' })}</span>
+            {status === 'in_review' && holder ? (
+              <span className="rqh-who">
+                <Avatar name={holderPerson ? text(holderPerson.name) : undefined} size="sm" />
+                <span>{t('requests.atWho', { who: holder })} · {ago(cur?.startedAt ?? r.createdAt, now)}{exp ? <> · <em className={exp === t('requests.late') ? 'late' : ''}>{exp}</em></> : null}</span>
               </span>
-            </div>
-          ))}
+            ) : null}
+          </span>
         </div>
-      ) : null}
+        <Stepper steps={d.steps} status={status} />
+        {d.canResubmit ? <motion.button type="button" className="btn primary block lg rqh-cta" whileTap={{ scale: 0.97 }} onClick={() => navigate(`/requests/${r.id}/resubmit`)}><I.ret />{t('requests.resubmit')}</motion.button> : null}
+      </motion.section>
 
-      <div className="card">
-        <b>{text({ ar: 'مسار الطلب', en: 'Route' })}</b>
-        <ol className="timeline">
-          {steps.map((s) => (
-            <li key={s.id} data-status={s.status}>
-              <div className="hrow"><b>{text(s.title)}</b><StatusPill status={s.status} /></div>
-              {s.actor ? <small>{text(s.actor.name)} · {text(s.actor.title)} · {fmtDate(s.completedAt, lang, true)}</small>
-                : s.assignees.length ? <small>{text({ ar: 'عند: ', en: 'With: ' })}{s.assignees.map((a) => text(a.name)).join('، ')}</small> : null}
-              {s.why ? <small className="muted">{text(s.why)}</small> : null}
-              {s.ref ? <small className="mono">{text({ ar: 'المرجع: ', en: 'Ref: ' })}{s.ref}</small> : null}
-              {s.note ? <small>“{s.note}”</small> : null}
-              {s.status === 'current' && s.dueAt ? <small className="muted">{text({ ar: 'المهلة حتى ', en: 'Due ' })}{fmtDate(s.dueAt, lang, true)}</small> : null}
-            </li>
-          ))}
-        </ol>
+      <div className={desk ? 'rq-cols' : ''}>
+        <div>
+          {d.documents.length > 0 && (
+            <section className="lb-sec-list">
+              <div className="lb-head"><h2>{t('requests.documents')}</h2></div>
+              {d.documents.map((x, i) => <Seal key={x.id} title={text(x.title)} number={x.number} onOpen={() => setDoc(x)} delay={0.15 + i * 0.1} />)}
+            </section>
+          )}
+          <section className="lb-sec-list">
+            <div className="lb-head"><h2>{t('requests.submitted')}</h2>{!mine ? <span className="lb-muted">{t('requests.requester')}: {text(r.requester.name)}</span> : null}</div>
+            {valued.length > 0 ? (
+              <Group>
+                {valued.map((f) => (
+                  <div key={f.key} className="summary-row">
+                    <span className="k">{text(f.label)}</span>
+                    <span className="v">{f.type === 'attachment' ? <Pill icon="clip">{text(f.display)}</Pill> : text(f.display)}</span>
+                  </div>
+                ))}
+              </Group>
+            ) : null}
+          </section>
+        </div>
+        <div>
+          <section className="lb-sec-list">
+            <div className="lb-head"><h2>{t('requests.events')}</h2><span className="lb-count num">{events.length}</span></div>
+            <div className="ev-list">
+              {shownEvents.map((a, i) => (
+                <div key={i} className="ev">
+                  {a.actor ? <Avatar name={text(a.actor.name)} /> : <span className="cell-lead plain"><I.gear /></span>}
+                  <span className="ev-txt"><b><Nb s={text(a.what)} /></b><span>{a.actor ? text(a.actor.name) : t('requests.system')} · {date(a.at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></span>
+                </div>
+              ))}
+            </div>
+            {events.length > 2 ? <button type="button" className="lb-link" onClick={() => setAllEvents((v) => !v)}>{allEvents ? t('requests.showLess') : t('requests.showAll', { n: events.length })}</button> : null}
+            <button type="button" className="lb-link" onClick={() => setRoute((v) => !v)}>{t('requests.route')}<I.chevDown className={`lb-chev ${route ? 'up' : ''}`} /></button>
+            <AnimatePresence initial={false}>
+              {route ? (
+                <motion.div key="route" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }} style={{ overflow: 'hidden' }}>
+                  <Group><div style={{ padding: '10px 14px 12px' }}><RouteRail steps={d.steps} now={now} /></div></Group>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </section>
+          <section className="lb-sec-list rq-actions"><RequestActions d={d} /></section>
+        </div>
       </div>
 
-      <details className="card">
-        <summary><b>{text({ ar: 'سجل الطلب', en: 'Audit trail' })}</b></summary>
-        <ul className="audit">{audit.map((a, i) => <li key={i}><small className="muted">{fmtDate(a.at, lang, true)}</small> {text(a.what)}{a.actor ? ` — ${text(a.actor.name)}` : ''}</li>)}</ul>
-      </details>
-    </div>
+      <BottomSheet open={!!doc} onClose={() => setDoc(null)} title={doc ? text(doc.title) : ''} tall className="reader">
+        <div className="lb-doc">{doc ? <DocumentViewer id={doc.id} name={doc.number} /> : null}</div>
+      </BottomSheet>
     </PageChrome>
   );
 }
 
-function DecisionPanel({ step, requestId }: { step: StepDetail; requestId: string }) {
-  const { text } = useI18n();
-  const qc = useQueryClient();
-  const [note, setNote] = useState('');
-  const [ref, setRef] = useState('');
-  const m = useMutation({
-    mutationFn: (action: DecisionAction) => decide(step.id, action, note || undefined, ref || undefined),
-    onSuccess: (d) => { qc.setQueryData(['request', requestId], d); qc.invalidateQueries({ queryKey: ['tasks'] }); },
+/** What the requester can do on the request now: withdraw it while nobody else has decided (the service's rule). */
+function RequestActions({ d }: { d: RequestDetail }) {
+  const { t, text } = useI18n(); const island = useIsland(); const qc = useQueryClient();
+  const r = d.request;
+  const withdraw = useMutation({
+    mutationFn: () => withdrawRequest(r.id, r.version),
+    onSuccess: (next) => {
+      qc.setQueryData(['request', r.id], next);
+      void qc.invalidateQueries({ queryKey: ['requests'] });
+      island({ title: t('requests.withdrawn'), sub: `${text(r.serviceName)} · ${r.id}`, icon: 'x', tone: 'warn' });
+    },
+    onError: (e) => {
+      if (isStale(e)) { island({ title: t('requests.stale'), icon: 'reset', tone: 'info' }); void qc.invalidateQueries({ queryKey: ['request', r.id] }); }
+    },
   });
-  const err = m.error instanceof ApiError ? m.error : null;
+  if (!d.canWithdraw) return null;
   return (
-    <div className="card decision">
-      <b>{text({ ar: 'بانتظار قرارك', en: 'Awaiting your decision' })}: {text(step.title)}</b>
-      {step.mode === 'fulfil' ? <label className="dyn-field"><span>{text({ ar: 'مرجع التنفيذ', en: 'Fulfilment reference' })} *</span><input value={ref} onChange={(e) => setRef(e.target.value)} /></label> : null}
-      <label className="dyn-field"><span>{text({ ar: 'ملاحظة (إلزامية عند الرفض)', en: 'Note (required to reject)' })}</span><textarea value={note} onChange={(e) => setNote(e.target.value)} /></label>
-      {err ? <p className="error">{text(err.checks[0]?.text ?? err.title ?? { ar: 'تعذّر', en: 'Failed' })}</p> : null}
-      <div className="actions">
-        {step.mode === 'approve' ? <button className="btn primary" disabled={m.isPending} onClick={() => m.mutate('approve')}>{text({ ar: 'اعتماد', en: 'Approve' })}</button> : null}
-        {step.mode === 'fulfil' ? <button className="btn primary" disabled={m.isPending} onClick={() => m.mutate('done')}>{text({ ar: 'تم التنفيذ', en: 'Done' })}</button> : null}
-        {step.mode === 'receipt' ? <button className="btn primary" disabled={m.isPending} onClick={() => m.mutate('receive')}>{text({ ar: 'استلمت', en: 'Received' })}</button> : null}
-        {step.mode !== 'receipt' ? <button className="btn danger" disabled={m.isPending} onClick={() => m.mutate('reject')}>{text({ ar: 'رفض', en: 'Reject' })}</button> : null}
-      </div>
+    <div style={{ marginTop: 16 }}>
+      <motion.button type="button" className="btn secondary block" disabled={withdraw.isPending} whileTap={{ scale: 0.97 }} onClick={() => withdraw.mutate()}><I.x />{t('requests.withdraw')}</motion.button>
     </div>
-  );
-}
-
-/** Fetches the PDF with the caller's credentials, then saves it (a plain link could not send them). */
-export function PdfButton({ id, name }: { id: string; name: string }) {
-  const { text } = useI18n();
-  const m = useMutation({
-    mutationFn: () => getDocumentPdf(id),
-    onSuccess: (blob) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${name}.pdf`; a.click(); URL.revokeObjectURL(a.href); },
-  });
-  return (
-    <>
-      <button className="btn" disabled={m.isPending} onClick={() => m.mutate()}>{m.isPending ? '…' : text({ ar: 'تنزيل PDF', en: 'Download PDF' })}</button>
-      {m.isError ? <small className="error">{text((m.error as ApiError).title ?? { ar: 'تعذّر إنشاء PDF', en: 'PDF failed' })}</small> : null}
-    </>
   );
 }

@@ -7,6 +7,7 @@
 | `leave-request` | service | coded | TM-01 | Type picker, live evaluation, pay tiers, entitlements, IT2001 posting (LV-01…LV-07). |
 | `leave-cancellation` | service | coded | TM-01C | Cancellation of approved leave (LV-08). |
 | `leave-history` | view | coded |  | Merged from SAP absences and portal requests (LV-09). |
+| `balances` | view | coded |  | My balances: absence quotas (SAP-004). |
 | `leave-policy` | policy | coded |  | Versioned types, routes, entitlements, calendar (POL-01…POL-04). |
 | `leave-operations` | policy | coded |  | Seasonal windows, entitlement groups, period close (OPS-01). |
 <!-- @gen:features -->

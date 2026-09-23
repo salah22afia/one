@@ -1,5 +1,6 @@
 /**
- * Platform module: administrator settings stored in PostgreSQL (languages first; more as features need them).
+ * Platform module: settings stored in PostgreSQL — the administrator's (languages first; more as features need them)
+ * and each person's own display preferences (language, appearance, text size).
  */
 @ApplicationModule(displayName = "Platform · settings")
 package org.gcc.usp.platform.settings;

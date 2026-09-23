@@ -1,0 +1,37 @@
+{
+  "_comment": "Employee self-service data for the SAP stub (SAP-001 extension, SAP-002 … SAP-005), keyed by employee number. From the prototype's seed (data/seed.ts) for Ahmed; employees not listed get empty lists.",
+  "2101": {
+    "profile": {
+      "gender": "m",
+      "hire_date": "2023-01-01",
+      "mobile": "+966512345412",
+      "work_email": "a.aldosari@gcc-sg.org",
+      "employee_group": { "code": "1", "text_ar": "موظف رسمي", "text_en": "Official employee" },
+      "employee_subgroup": { "code": "12", "text_ar": "رسمي · تخصصي", "text_en": "Official · specialist" },
+      "work_location": { "code": "riyadh", "text_ar": "الرياض", "text_en": "Riyadh" },
+      "bank": { "iban": "SA0380000000608010164471", "bank_name_ar": "مصرف الراجحي", "bank_name_en": "Al Rajhi Bank" }
+    },
+    "documents": [
+      { "id": "0185-02-1", "kind": "passport", "type": { "code": "02", "text_ar": "جواز السفر", "text_en": "Passport" }, "number": "A12345712", "issue_date": "2022-03-16", "expiry_date": "2027-03-16" },
+      { "id": "0185-01-1", "kind": "id", "type": { "code": "01", "text_ar": "الهوية الوطنية", "text_en": "National ID" }, "number": "1012345634", "issue_date": "2019-05-10", "expiry_date": "2029-05-10" },
+      { "id": "0185-07-1", "kind": "card", "type": { "code": "07", "text_ar": "البطاقة الإدارية", "text_en": "Administrative card" }, "number": "GS-2024-2201", "issue_date": "2024-10-12", "expiry_date": "2026-10-12" },
+      { "id": "0185-05-1", "kind": "licence", "type": { "code": "05", "text_ar": "رخصة القيادة", "text_en": "Driving licence" }, "number": "30012351", "issue_date": "2021-10-07", "expiry_date": "2026-10-07" },
+      { "id": "0016-1", "kind": "contract", "type": { "code": "C1", "text_ar": "عقد العمل", "text_en": "Employment contract" }, "number": "C-2023-118", "issue_date": "2023-01-01", "expiry_date": "2027-09-07" },
+      { "id": "0185-09-1", "kind": "medical_insurance", "type": { "code": "09", "text_ar": "بطاقة التأمين الطبي", "text_en": "Medical insurance card" }, "number": "MI-2026-0093", "issue_date": "2026-01-01", "expiry_date": "2027-01-07" }
+    ],
+    "family": [
+      { "id": "0021-1-01", "relation": { "code": "1", "text_ar": "زوجة", "text_en": "Spouse" }, "arabic_name": "ريم", "english_name": "Reem", "gender": "f", "date_of_birth": "1996-04-02", "document": { "kind": "id", "expiry_date": "2027-05-01" } },
+      { "id": "0021-2-01", "relation": { "code": "2", "text_ar": "ابن", "text_en": "Son" }, "arabic_name": "سعود", "english_name": "Saud", "gender": "m", "date_of_birth": "2019-08-15", "document": { "kind": "id", "expiry_date": "2026-11-02" } }
+    ],
+    "quotas": [
+      { "type": { "code": "10", "text_ar": "سنوية", "text_en": "Annual" }, "kind": "annual", "entitlement": 30, "used": 8.5, "remaining": 21.5, "unit": "days", "valid_to": "2026-12-31" },
+      { "type": { "code": "20", "text_ar": "مرضية", "text_en": "Sick" }, "kind": "sick", "entitlement": 30, "used": 0, "remaining": 30, "unit": "days", "valid_to": "2026-12-31" },
+      { "type": { "code": "30", "text_ar": "اضطرارية", "text_en": "Emergency" }, "kind": "emergency", "entitlement": 5, "used": 0, "remaining": 5, "unit": "days", "valid_to": "2026-12-31" }
+    ],
+    "payslips": [
+      { "id": "2026-07", "period": "2026-07", "pay_date": "2026-07-25", "gross": 18500.00, "deductions": 2100.00, "net": 16400.00, "currency": "SAR" },
+      { "id": "2026-09", "period": "2026-09", "pay_date": "2026-09-22", "gross": 18500.00, "deductions": 1850.00, "net": 16650.00, "currency": "SAR" },
+      { "id": "2026-08", "period": "2026-08", "pay_date": "2026-08-24", "gross": 18500.00, "deductions": 1850.00, "net": 16650.00, "currency": "SAR" }
+    ]
+  }
+}

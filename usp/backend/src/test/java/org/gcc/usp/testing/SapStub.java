@@ -15,9 +15,10 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ObjectNode;
 
 /**
- * A stand-in for the SAP Tamkeen services (docs/SAP_INTEGRATION.md) for backend tests: profile (SAP-001) and org
- * structure (SAP-010 … SAP-014), served from src/test/resources/sap/org-fixture.json. Every fixture employee signs in
- * as {@code U<employee_no>} with password {@code secret}. Records the paths called.
+ * A stand-in for the SAP Tamkeen services (docs/SAP_INTEGRATION.md) for backend tests: profile (SAP-001), employee
+ * self-service (SAP-002 … SAP-005) and org structure (SAP-010 … SAP-014), served from src/test/resources/sap/
+ * org-fixture.json and me-fixture.json. Every fixture employee signs in as {@code U<employee_no>} with password
+ * {@code secret}. Records the paths called.
  */
 public final class SapStub implements AutoCloseable {
 
@@ -26,11 +27,13 @@ public final class SapStub implements AutoCloseable {
     private static final JsonMapper JSON = JsonMapper.builder().build();
     private final HttpServer server;
     private final JsonNode fixture;
+    private final JsonNode self;
     public final List<String> calls = new CopyOnWriteArrayList<>();
 
     public SapStub() {
-        try (var in = SapStub.class.getResourceAsStream("/sap/org-fixture.json")) {
+        try (var in = SapStub.class.getResourceAsStream("/sap/org-fixture.json"); var mine = SapStub.class.getResourceAsStream("/sap/me-fixture.json")) {
             fixture = JSON.readTree(in);
+            self = JSON.readTree(mine);
             server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -66,8 +69,20 @@ public final class SapStub implements AutoCloseable {
             return;
         }
         var p = path.substring("/sap/tamkeen/".length()).split("/");
-        Object body = switch (p[0] + (p.length > 1 ? "/" + p[1] : "")) {
-            case "profile/me" -> profile(me);
+        var mine = self.path(me.get("employee_no").asString());
+        Object body = switch (String.join("/", java.util.Arrays.copyOf(p, Math.min(p.length, 3)))) {
+            case "profile/me" -> profile(me, mine.path("profile"));
+            case "profile/me/documents" -> Map.of("documents", list(mine, "documents"));
+            case "profile/me/family" -> Map.of("members", list(mine, "family"));
+            case "time/me/quotas" -> Map.of("quotas", list(mine, "quotas"));
+            case "payroll/me/payslips" -> Map.of("payslips", list(mine, "payslips"));
+            default -> org(p, me);
+        };
+        send(ex, body == null ? 404 : 200, body);
+    }
+
+    private Object org(String[] p, JsonNode me) {
+        return switch (p[0] + (p.length > 1 ? "/" + p[1] : "")) {
             case "org/me" -> Map.of("employee_no", me.get("employee_no").asString(),
                 "positions", positions().stream().filter(x -> heldBy(x, me)).map(x -> Map.of("id", x.get("id").asString(), "primary", true)).toList(),
                 "acting_for", List.of());
@@ -78,7 +93,11 @@ public final class SapStub implements AutoCloseable {
             case "org/positions" -> positions().stream().filter(x -> x.get("id").asString().equals(p[2])).findFirst().orElse(null);
             default -> null;
         };
-        send(ex, body == null ? 404 : 200, body);
+    }
+
+    private static JsonNode list(JsonNode mine, String field) {
+        var v = mine.path(field);
+        return v.isArray() ? v : JSON.createArrayNode();
     }
 
     private JsonNode authenticate(String header) {
@@ -88,10 +107,16 @@ public final class SapStub implements AutoCloseable {
         return employees().stream().filter(e -> e.get("sap_user").asString().equalsIgnoreCase(pair[0])).findFirst().orElse(null);
     }
 
-    private static Map<String, Object> profile(JsonNode e) {
-        var hire = e.get("hire_date").asString();
-        return Map.of("employee_no", Integer.parseInt(e.get("employee_no").asString()), "arabic_name", e.get("arabic_name").asString(),
-            "english_name", e.get("english_name").asString(), "date_of_birth", "01-01-1990", "hire_date_iso", hire);
+    /** SAP-001 as confirmed (numeric employee_no, dd-MM-yyyy), plus the requested extension where the fixture has it. */
+    private static ObjectNode profile(JsonNode e, JsonNode extension) {
+        var n = JSON.createObjectNode();
+        n.put("employee_no", Integer.parseInt(e.get("employee_no").asString()));
+        n.put("arabic_name", e.get("arabic_name").asString());
+        n.put("english_name", e.get("english_name").asString());
+        n.put("date_of_birth", "01-01-1990");
+        n.put("hire_date_iso", e.get("hire_date").asString());
+        if (extension.isObject()) extension.properties().forEach(f -> n.set(f.getKey(), f.getValue()));
+        return n;
     }
 
     private ObjectNode assignment(JsonNode e) {

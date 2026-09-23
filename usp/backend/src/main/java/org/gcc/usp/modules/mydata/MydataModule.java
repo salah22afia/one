@@ -16,7 +16,10 @@ class MydataModule {
     ModuleDescriptor mydataDescriptor() {
         return new ModuleDescriptor("mydata", "MD", LocalizedText.arEn("بياناتي ومستنداتي", "My Data & Documents"), "person", 30,
                 List.of(
-                        FeatureDescriptor.coded("mydata.profile", null, Kind.VIEW, LocalizedText.arEn("ملفي", "My profile")),
+                        FeatureDescriptor.coded("mydata.profile", null, Kind.VIEW, LocalizedText.arEn("بياناتي", "My data")),
+                        FeatureDescriptor.coded("mydata.documents", null, Kind.VIEW, LocalizedText.arEn("محفظة مستنداتي", "My documents")),
+                        FeatureDescriptor.coded("mydata.family", null, Kind.VIEW, LocalizedText.arEn("أسرتي", "My family")),
+                        FeatureDescriptor.coded("mydata.card", null, Kind.VIEW, LocalizedText.arEn("البطاقة الرقمية", "Digital card")),
                         FeatureDescriptor.configured("mydata.personal-data", "MD-01", LocalizedText.arEn("تحديث بياناتي الشخصية", "Update my personal data")),
                         FeatureDescriptor.configured("mydata.bank-account", "MD-02", LocalizedText.arEn("تغيير الحساب البنكي", "Change salary account")),
                         FeatureDescriptor.configured("mydata.document-update", "MD-05", LocalizedText.arEn("تحديث مستند", "Update a document"))

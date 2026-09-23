@@ -8,7 +8,7 @@ uses it, and when it is called. **Update this file in the same change that adds 
 | **SAP system** | `http://sandbox.gcc-sg.org:8000` (sandbox), configured by `USP_SAP_URL` |
 | **Client** | optional `sap-client` query parameter, configured by `USP_SAP_CLIENT` |
 | **Portal side** | `backend/src/main/java/org/gcc/usp/platform/integration/SapClient.java` (one client for all calls) |
-| **Last updated** | 2026-09-22 |
+| **Last updated** | 2026-09-23 |
 
 ## Conventions (apply to every endpoint)
 
@@ -30,7 +30,11 @@ Status values: **Live** (called in production code and confirmed by SAP team) ·
 
 | ID | API | Status | Used by |
 |---|---|---|---|
-| [SAP-001](#sap-001-employee-profile-me) | `GET /sap/tamkeen/profile/me` | Implemented | Sign-in, My profile |
+| [SAP-001](#sap-001-employee-profile-me) | `GET /sap/tamkeen/profile/me` | Implemented (extension proposed) | Sign-in, My data, the digital card |
+| [SAP-002](#sap-002-my-documents) | `GET /sap/tamkeen/profile/me/documents` | Implemented | Me › My documents (wallet), My data completeness |
+| [SAP-003](#sap-003-my-family) | `GET /sap/tamkeen/profile/me/family` | Implemented | Me › My family |
+| [SAP-004](#sap-004-my-absence-quotas) | `GET /sap/tamkeen/time/me/quotas` | Implemented | Me › My balances |
+| [SAP-005](#sap-005-my-payslips) | `GET /sap/tamkeen/payroll/me/payslips` | Implemented | Me › My pay |
 | [SAP-010](#sap-010-my-org-assignment) | `GET /sap/tamkeen/org/me` | Implemented | Inbox, approver resolution |
 | [SAP-011](#sap-011-employee-org-assignment) | `GET /sap/tamkeen/org/employees/{employee_no}` | Implemented | Approver resolution (line manager), names on request timelines |
 | [SAP-012](#sap-012-org-unit) | `GET /sap/tamkeen/org/units/{unit_id}` | Implemented | Approver resolution (chief, parent chain) |
@@ -44,8 +48,8 @@ Status values: **Live** (called in production code and confirmed by SAP team) ·
 | | |
 |---|---|
 | Status | **Implemented** (tested against a stub; real test pending network access) |
-| Used by | Sign-in (`POST /api/v1/auth/login`) to verify the credentials and learn the employee number · My profile (`GET /api/v1/mydata/profile`, web "ملفي", mobile "Me") |
-| When | Once at sign-in; on every visit to the profile page (no caching) |
+| Used by | Sign-in (`POST /api/v1/auth/login`) to verify the credentials and learn the employee number · My data (`GET /api/v1/mydata/profile`): with the extension below, contact details, salary account, group, subgroup, work location and hire date; position, unit and line manager come from the org structure (SAP-011 … 013) when the extension does not carry them |
+| When | Once at sign-in; when Me or My data opens (kept only in the app's memory for a few minutes, never on disk) |
 | Caller | The user signing in / signed in |
 | Persistence | None. The session keeps the employee number and name in memory while signed in. |
 
@@ -69,7 +73,9 @@ Accept: application/json
 
 **Portal mapping:** `employee_no` → session identity and `employeeNo` (kept as text) · `arabic_name`/`english_name` → `name.ar`/`name.en` · `date_of_birth` → `dateOfBirth` (ISO).
 
-**Requested extension (to agree with the SAP team):**
+**Requested extension (to agree with the SAP team; the portal already reads it when present):** `mobile` and
+`bank.iban` are masked by the portal before they reach the browser (`+966 5• ••• •412`, `SA•• •••• 4471`); changes go
+through the MD-01 / MD-02 services, never directly.
 ```json
 {
   "employee_no": "00001818",
@@ -89,7 +95,103 @@ Accept: application/json
   "work_location": { "code": "riyadh", "text_ar": "الرياض", "text_en": "Riyadh" },
   "hire_date": "2023-01-01",
   "grade": "12",
-  "contract": { "type": "official", "end_date": null, "tickets_entitled": true }
+  "contract": { "type": "official", "end_date": null, "tickets_entitled": true },
+  "bank": { "iban": "SA0380000000608010164471", "bank_name_ar": "مصرف الراجحي", "bank_name_en": "Al Rajhi Bank" }
+}
+```
+
+---
+
+## Employee self-service reads (SAP-002 … SAP-005)
+
+The Me tab (Slice 1.3) reads the employee's own records live, **as the signed-in user**, on every visit; nothing is
+stored by the portal (responses carry `Cache-Control: no-store`). An employee without records gets empty lists. Paths are
+configurable (`usp.sap.paths.*`). **SAP authorisation needed:** each employee may read their own personnel number only
+(`P_PERNR` own-record access for infotypes 0021, 0185, 2006 and payroll results). To agree with Basis.
+
+### SAP-002 My documents
+
+| | |
+|---|---|
+| Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
+| Used by | Me › My documents (the wallet: soonest expiry first, full number when a card is brought forward), the "My data" completeness on Me |
+| Source in SAP | IT0185 (personal IDs: passport, national ID, residence), IT0016 (contract), cards and insurance where kept |
+| When | When Me or My documents opens |
+
+```http
+GET /sap/tamkeen/profile/me/documents
+```
+```json
+{
+  "documents": [
+    { "id": "0185-02-1", "kind": "passport", "type": { "code": "02", "text_ar": "جواز السفر", "text_en": "Passport" }, "number": "A12345712", "issue_date": "2022-03-16", "expiry_date": "2027-03-16" },
+    { "id": "0185-05-1", "kind": "licence", "type": { "code": "05", "text_ar": "رخصة القيادة", "text_en": "Driving licence" }, "number": "30012351", "issue_date": "2021-10-07", "expiry_date": "2026-10-07" }
+  ]
+}
+```
+`kind` (the wallet card's icon and colour): `passport`, `id`, `card`, `licence`, `contract`, `insurance`; anything else is
+shown as a card. `id` must be stable per document.
+
+### SAP-003 My family
+
+| | |
+|---|---|
+| Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
+| Used by | Me › My family (relation and the time left on each member's document), the count on Me |
+| Source in SAP | IT0021 (family members / dependants), their document from IT0185 of the member where kept |
+| When | When Me or My family opens |
+
+```http
+GET /sap/tamkeen/profile/me/family
+```
+```json
+{
+  "members": [
+    { "id": "0021-1-01", "relation": { "code": "1", "text_ar": "زوجة", "text_en": "Spouse" }, "arabic_name": "ريم", "english_name": "Reem", "gender": "f", "date_of_birth": "1996-04-02", "document": { "kind": "id", "expiry_date": "2027-05-01" } }
+  ]
+}
+```
+
+### SAP-004 My absence quotas
+
+| | |
+|---|---|
+| Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
+| Used by | Me › My balances (a ring per quota: remaining of entitlement), the annual balance on Me |
+| Source in SAP | IT2006 (absence quotas), deductions from IT2001 |
+| When | When Me or My balances opens |
+
+```http
+GET /sap/tamkeen/time/me/quotas
+```
+```json
+{
+  "quotas": [
+    { "type": { "code": "10", "text_ar": "سنوية", "text_en": "Annual" }, "kind": "annual", "entitlement": 30, "used": 8.5, "remaining": 21.5, "unit": "days", "valid_to": "2026-12-31" },
+    { "type": { "code": "20", "text_ar": "مرضية", "text_en": "Sick" }, "kind": "sick", "entitlement": 30, "used": 0, "remaining": 30, "unit": "days", "valid_to": "2026-12-31" }
+  ]
+}
+```
+`kind` (the ring's colour and which one leads Me): `annual`, `sick`, `emergency`; others are shown with SAP's text.
+`unit`: `days` (default) or `hours`.
+
+### SAP-005 My payslips
+
+| | |
+|---|---|
+| Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
+| Used by | Me › My pay (newest first; one opens with gross, deductions, net and pay date), the latest month on Me |
+| Source in SAP | Payroll results (cluster RT), the employee's own periods only |
+| When | When Me or My pay opens; `months` = `USP_PAYSLIP_MONTHS` (default 12) |
+
+```http
+GET /sap/tamkeen/payroll/me/payslips?months=12
+```
+```json
+{
+  "payslips": [
+    { "id": "2026-09", "period": "2026-09", "pay_date": "2026-09-22", "gross": 18500.00, "deductions": 1850.00, "net": 16650.00, "currency": "SAR" }
+  ]
 }
 ```
 
@@ -135,8 +237,8 @@ GET /sap/tamkeen/org/me
 | | |
 |---|---|
 | Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
-| Used by | Line-manager resolution for a requester; names and titles on timelines and inbox rows; the holder block of issued documents (gender for Arabic wording, hire date) |
-| When | When a step opens; when a request page shows who acted |
+| Used by | Line-manager resolution for a requester; names and titles on timelines, inbox rows, Tasks → Done and "My requests" rows; who made each change in the admin catalogue log; My data (the employee's own position and unit, and the line manager's name and title); the holder block of issued documents (gender for Arabic wording, hire date) |
+| When | When a step opens; when a request page or a list page shows who acted or who has it. A list page asks for all its people in one concurrent round (at most `USP_SAP_MAX_PARALLEL` calls at once, default 6), memoised for that HTTP request only |
 
 ```http
 GET /sap/tamkeen/org/employees/00001818
@@ -181,8 +283,8 @@ GET /sap/tamkeen/org/units/50000111
 | | |
 |---|---|
 | Status | **Implemented** (contract proposed by the portal team; tested against a stub; awaiting the SAP team) |
-| Used by | Holder of the approver position; deputy when vacant; superior when there is no deputy |
-| When | When a step opens; when a timeline shows who holds a waiting step now |
+| Used by | Holder of the approver position; deputy when vacant; superior when there is no deputy; who has a request now on "My requests" rows |
+| When | When a step opens; when a timeline or a list row shows who holds a waiting step now (list pages: one concurrent round, as SAP-011) |
 
 ```http
 GET /sap/tamkeen/org/positions/50001200
@@ -226,6 +328,10 @@ GET /sap/tamkeen/org/units/50000211/positions
 |---|---|---|---|
 | Issued-document snapshot: holder name, title, unit, gender, hire date, salary line if requested, signer | `documents.issued_document` | A legal document must be reproducible and verifiable exactly as issued | Business owner, 2026-09-22 |
 | Workflow state: position/unit ids a step waits on, employee numbers of who decided, when | `workflow.*`, `requests.audit` | The portal's own audit trail (who approved what, and when) | Business owner, 2026-09-22 |
+
+The digital employee card's QR code carries the employee number, name and an expiry, **signed by the portal** (HMAC)
+and valid for `USP_CARD_CODE_VALIDITY` (default 24 h): the public check verifies the signature, so nothing is stored and
+SAP is not called (business owner, 2026-09-23).
 
 Background jobs (SLA reminders, escalations) make **no SAP calls**: there is no technical SAP user. Their notifications are
 in-app only, addressed to the stored position ids and shown to whoever holds the position when they next sign in

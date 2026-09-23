@@ -22,10 +22,13 @@ export const platformRoutes: RouteObject[] = [
 ];
 export const platformNav = features.map((f) => ({ to: `/${f.path}`, label: f.label }));
 
-/** Only for platform administrators (the sidebar shows it to them; the API enforces it). */
-export const adminOnlyRoutes: RouteObject[] = [
-  { path: 'platform-users', Component: lazy(() => import('./platform-users/PlatformUsersPage')) },
+/** Only for platform administrators (the sidebar shows them to them; the API enforces it). Labels are catalog keys. */
+const adminOnly: { path: string; label: string; Component: RouteObject['Component'] }[] = [
+  { path: 'catalog', label: 'catalogAdmin.title', Component: lazy(() => import('./catalog/CatalogAdminPage')) },
+  { path: 'platform-users', label: 'users.title', Component: lazy(() => import('./platform-users/PlatformUsersPage')) },
 ];
+export const adminOnlyRoutes: RouteObject[] = adminOnly.map((f) => ({ path: f.path, Component: f.Component }));
+export const adminOnlyNav = adminOnly.map((f) => ({ to: `/${f.path}`, label: f.label }));
 export const accountRoutes: RouteObject[] = [
   { path: 'account/password', Component: lazy(() => import('./account/PasswordPage')) },
 ];

@@ -2,14 +2,23 @@ package org.gcc.usp.platform.org;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import org.gcc.usp.platform.identity.CurrentUser;
 import org.gcc.usp.platform.identity.PlatformUsers;
 import org.gcc.usp.platform.integration.SapClient;
+import org.gcc.usp.platform.integration.SapCredentials;
 import org.gcc.usp.platform.integration.SapException;
 import org.gcc.usp.platform.org.OrgModel.Employee;
 import org.gcc.usp.platform.org.OrgModel.Me;
@@ -17,6 +26,7 @@ import org.gcc.usp.platform.org.OrgModel.Person;
 import org.gcc.usp.platform.org.OrgModel.Position;
 import org.gcc.usp.platform.org.OrgModel.Unit;
 import org.gcc.usp.platform.shared.LocalizedText;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -37,11 +47,13 @@ public class OrgDirectory {
     private final SapClient sap;
     private final CurrentUser currentUser;
     private final PlatformUsers platformUsers;
+    private final int maxParallel;
 
-    OrgDirectory(SapClient sap, CurrentUser currentUser, PlatformUsers platformUsers) {
+    OrgDirectory(SapClient sap, CurrentUser currentUser, PlatformUsers platformUsers, @Value("${usp.sap.max-parallel:6}") int maxParallel) {
         this.sap = sap;
         this.currentUser = currentUser;
         this.platformUsers = platformUsers;
+        this.maxParallel = Math.max(1, maxParallel);
     }
 
     /** SAP-010: the signed-in user's positions. */
@@ -60,9 +72,7 @@ public class OrgDirectory {
 
     /** SAP-011. */
     public Optional<Employee> employee(String employeeNo) {
-        return memo("emp:" + employeeNo, () -> get(EMPLOYEE + employeeNo).map(n -> new Employee(text(n, "employee_no"),
-            LocalizedText.arEn(text(n, "arabic_name"), text(n, "english_name")), blankToNull(text(n, "position_id")), blankToNull(text(n, "org_unit_id")),
-            blankToNull(text(n, "gender")), isoDate(text(n, "hire_date")))));
+        return memo("emp:" + employeeNo, () -> get(EMPLOYEE + employeeNo).map(OrgDirectory::toEmployee));
     }
 
     /** Name and position title for display; falls back to the employee number when SAP does not know the person. */
@@ -97,6 +107,68 @@ public class OrgDirectory {
         });
     }
 
+    /**
+     * Loads people (SAP-011, with their position titles) and positions (SAP-013) for a list page concurrently into this
+     * HTTP request's memo, so the page asks SAP in parallel rather than one row after another. At most
+     * {@code usp.sap.max-parallel} calls run at once, each as the signed-in user. A failed lookup is simply not memoised:
+     * the regular lookup then reports it as usual.
+     */
+    public void prefetch(Collection<String> employeeNos, Collection<String> positionIds) {
+        var cache = cache();
+        if (cache == null || !currentUser.hasSap()) return;
+        var credentials = currentUser.sapCredentials();
+        var people = employeeNos.stream().filter(Objects::nonNull).filter(no -> !PlatformUsers.isPlatformId(no))
+            .distinct().filter(no -> !cache.containsKey("emp:" + no)).toList();
+        var found = fetchAll(people.stream().map(no -> EMPLOYEE + no).toList(), credentials);
+        var ownPositions = new ArrayList<String>();
+        for (var no : people) {
+            var n = found.get(EMPLOYEE + no);
+            if (n == null) continue;
+            Optional<Employee> e = n.map(OrgDirectory::toEmployee);
+            cache.put("emp:" + no, e);
+            e.map(Employee::positionId).ifPresent(ownPositions::add);
+        }
+        var positions = Stream.concat(positionIds.stream(), ownPositions.stream()).filter(Objects::nonNull).distinct()
+            .filter(id -> !cache.containsKey("pos:" + id)).toList();
+        var pos = fetchAll(positions.stream().map(id -> POSITION + id).toList(), credentials);
+        for (var id : positions) {
+            var n = pos.get(POSITION + id);
+            if (n != null) cache.put("pos:" + id, n.map(OrgDirectory::position));
+        }
+    }
+
+    /** GETs in parallel on virtual threads; the value is empty for 404 and absent for any other failure. */
+    private Map<String, Optional<JsonNode>> fetchAll(List<String> paths, SapCredentials credentials) {
+        if (paths.isEmpty()) return Map.of();
+        var slots = new Semaphore(maxParallel);
+        var out = new HashMap<String, Optional<JsonNode>>();
+        try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {
+            var futures = new LinkedHashMap<String, Future<Optional<JsonNode>>>();
+            for (var path : paths) futures.put(path, pool.submit(() -> {
+                slots.acquire();
+                try {
+                    return Optional.of(sap.get(path, credentials).body());
+                } catch (SapException e) {
+                    return e.kind() == SapException.Kind.NOT_FOUND ? Optional.<JsonNode>empty() : null;
+                } finally {
+                    slots.release();
+                }
+            }));
+            for (var f : futures.entrySet()) {
+                try {
+                    var v = f.getValue().get();
+                    if (v != null) out.put(f.getKey(), v);
+                } catch (ExecutionException e) {
+                    // left for the regular lookup, which reports it
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+        return out;
+    }
+
     private Optional<JsonNode> get(String path) {
         // Signed in without SAP (platform account): SAP cannot be asked; names fall back to the number.
         if (!currentUser.hasSap()) return Optional.empty();
@@ -106,6 +178,11 @@ public class OrgDirectory {
             if (e.kind() == SapException.Kind.NOT_FOUND) return Optional.empty();
             throw e.toApi();
         }
+    }
+
+    private static Employee toEmployee(JsonNode n) {
+        return new Employee(text(n, "employee_no"), LocalizedText.arEn(text(n, "arabic_name"), text(n, "english_name")),
+            blankToNull(text(n, "position_id")), blankToNull(text(n, "org_unit_id")), blankToNull(text(n, "gender")), isoDate(text(n, "hire_date")));
     }
 
     private static Unit unit(JsonNode n) {

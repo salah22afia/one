@@ -16,7 +16,8 @@ class FinanceModule {
     ModuleDescriptor financeDescriptor() {
         return new ModuleDescriptor("finance", "FN", LocalizedText.arEn("المعاملات المالية للموظف", "Employee Finance"), "wallet", 50,
                 List.of(
-                        FeatureDescriptor.configured("finance.business-trip", "FN-01", LocalizedText.arEn("الانتداب ومهمة العمل", "Business trip & assignment"))
+                        FeatureDescriptor.configured("finance.business-trip", "FN-01", LocalizedText.arEn("الانتداب ومهمة العمل", "Business trip & assignment")),
+                        FeatureDescriptor.coded("finance.payslips", null, Kind.VIEW, LocalizedText.arEn("راتبي", "My pay"))
                         // @gen:features
                 ));
     }

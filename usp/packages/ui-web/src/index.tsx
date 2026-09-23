@@ -6,6 +6,7 @@ export * from './motion';
 export * from './components';
 export * from './shell';
 export * from './auth';
+export * from './tiles';
 
 /** Stand-in page for a scaffolded feature until it is implemented. */
 export function Placeholder({ title, feature }: { title: LocalizedText; feature: string }) {

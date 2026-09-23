@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { builtInLanguages, catalogs } from './catalogs';
-import { formatDate, formatHijri, formatNumber, pick, translate, type Language, type LocalizedText, type Params } from './core';
+import { ago, duration, formatDate, formatHijri, formatNumber, pick, pluralKey, translate, type Language, type LocalizedText, type Params } from './core';
 
 export * from './core';
 export { catalogs, builtInLanguages } from './catalogs';
@@ -17,6 +17,12 @@ export interface I18n {
   date: (iso: string | Date | null | undefined, opts?: Intl.DateTimeFormatOptions) => string;
   hijri: (iso: string | Date) => string;
   number: (n: number, opts?: Intl.NumberFormatOptions) => string;
+  /** A catalog text chosen by count: plural('time.days', 3) looks up time.days.few in Arabic, time.days.other in English. */
+  plural: (key: string, n: number) => string;
+  /** How long ago (now · 5 min ago · 3 h ago · 2 d ago). */
+  ago: (at: string | number | Date, now?: number) => string;
+  /** A span of time: 5 h · 3 d. */
+  duration: (ms: number) => string;
 }
 
 const Ctx = createContext<I18n | null>(null);
@@ -43,17 +49,27 @@ export function I18nProvider({ children, languages = builtInLanguages, initial, 
   // Applied for the starting language too, and when the administrator's list changes the default.
   useEffect(() => { onChange?.(current, dir); }, [current, dir, onChange]);
 
-  const value = useMemo<I18n>(() => ({
-    lang: current,
-    dir,
-    languages: offered,
-    setLang,
-    t: (key, params) => translate(catalogs, current, fallback, key, params),
-    text: (v) => pick(v, current, fallback),
-    date: (iso, opts) => formatDate(iso, current, opts),
-    hijri: (iso) => formatHijri(iso, current),
-    number: (n, opts) => formatNumber(n, current, opts),
-  }), [current, dir, offered, setLang, fallback]);
+  const value = useMemo<I18n>(() => {
+    const t = (key: string, params?: Params) => translate(catalogs, current, fallback, key, params);
+    const plural = (key: string, n: number) => {
+      const k = pluralKey(key, n, current);
+      return catalogs[current]?.[k] !== undefined ? t(k, { n }) : t(`${key}.other`, { n });
+    };
+    return {
+      lang: current,
+      dir,
+      languages: offered,
+      setLang,
+      t,
+      text: (v) => pick(v, current, fallback),
+      date: (iso, opts) => formatDate(iso, current, opts),
+      hijri: (iso) => formatHijri(iso, current),
+      number: (n, opts) => formatNumber(n, current, opts),
+      plural,
+      ago: (at, now) => ago(plural, t('time.now'), at, now),
+      duration: (ms) => duration(plural, ms),
+    };
+  }, [current, dir, offered, setLang, fallback]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

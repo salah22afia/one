@@ -44,12 +44,42 @@ usp:
     client: ${USP_SAP_CLIENT:}
     timeout: 10s
     profile-path: /sap/tamkeen/profile/me
+    # Employee self-service reads (docs/SAP_INTEGRATION.md), each called as the signed-in user.
+    paths:
+      documents: /sap/tamkeen/profile/me/documents   # SAP-002
+      family: /sap/tamkeen/profile/me/family         # SAP-003
+      quotas: /sap/tamkeen/time/me/quotas            # SAP-004
+      payslips: /sap/tamkeen/payroll/me/payslips     # SAP-005
+    # List pages ask SAP for the names they show concurrently (per signed-in user), at most this many calls at once.
+    max-parallel: ${USP_SAP_MAX_PARALLEL:6}
   session:
     # Portal sessions live in memory only. Idle and absolute limits.
     idle-timeout: 30m
     max-age: 8h
     # Secure cookie (HTTPS only). The dev profile turns it off for http://localhost.
     secure-cookie: true
+  requests:
+    # My requests and Tasks → Done are paged by key; clients may ask for up to max-page-size rows.
+    page-size: 30
+    max-page-size: 100
+  workflow:
+    # Limits on what a decider types (notes to the requester, fulfilment references).
+    note-max-length: 1000
+    ref-max-length: 100
+  catalog:
+    # The Home dock's row has room for this many services (plus "All services"); a layout limit, not a policy.
+    dock-max: ${USP_CATALOG_DOCK_MAX:4}
+    # How many entries of the catalogue change log the admin portal shows.
+    log-size: ${USP_CATALOG_LOG_SIZE:200}
+  card:
+    # The digital card's QR code: signed with this secret (defaults to the documents' one), valid this long, and opening
+    # the public verification page at this address.
+    secret: ${USP_CARD_SECRET:${usp.documents.verify-secret}}
+    code-validity: ${USP_CARD_CODE_VALIDITY:24h}
+    public-base-url: ${usp.documents.public-base-url}
+  payslips:
+    # How many months of payslips "My pay" lists (1–36).
+    months: ${USP_PAYSLIP_MONTHS:12}
   config-packages:
     # Source-controlled configured services (until the admin config store, §7.10).
     dir: ${USP_CONFIG_PACKAGES:../config-packages}

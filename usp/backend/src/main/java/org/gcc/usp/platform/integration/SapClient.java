@@ -76,6 +76,15 @@ public class SapClient {
         }
     }
 
+    /** GET a JSON resource as the user, for a user-facing API: SAP's refusals become the portal's API errors. */
+    public JsonNode fetch(String path, SapCredentials credentials) {
+        try {
+            return get(path, credentials).body();
+        } catch (SapException e) {
+            throw e.toApi();
+        }
+    }
+
     private static Optional<String> ticketFrom(List<String> setCookies) {
         return setCookies.stream().filter(c -> c.startsWith("MYSAPSSO2=")).map(c -> c.substring(10, c.contains(";") ? c.indexOf(';') : c.length()))
             .filter(v -> !v.isBlank()).findFirst();

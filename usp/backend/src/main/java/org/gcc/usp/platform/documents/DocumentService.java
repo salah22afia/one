@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,15 @@ public class DocumentService {
 
     public List<DocumentView> forRequest(String requestId) {
         return jdbc.sql("select * from documents.document where request_id = :r order by issued_at").param("r", requestId).query(this::view).list();
+    }
+
+    /** How many documents each request has (valid ones), for list rows; one query for the whole page. */
+    public Map<String, Integer> countsByRequest(Collection<String> requestIds) {
+        var out = new HashMap<String, Integer>();
+        if (requestIds.isEmpty()) return out;
+        jdbc.sql("select request_id, count(*) as n from documents.document where request_id in (:ids) and revoked_at is null group by request_id")
+            .param("ids", requestIds).query(rs -> { out.put(rs.getString("request_id"), rs.getInt("n")); });
+        return out;
     }
 
     public Optional<DocumentView> find(UUID id) {

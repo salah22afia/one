@@ -7,7 +7,7 @@ import { I18nProvider, useI18n } from '@usp/i18n';
 import { Avatar, ChangePassword, IslandProvider, LayoutGroup, MotionConfig, SignIn, UIProvider, motion } from '@usp/ui-web';
 import emblem from '@usp/ui-web/emblem.png';
 import { modules } from './registry';
-import { platformRoutes, platformNav, adminTitle, adminOnlyRoutes, accountRoutes } from '../platform/routes';
+import { platformRoutes, platformNav, adminTitle, adminOnlyRoutes, adminOnlyNav, accountRoutes } from '../platform/routes';
 
 const queryClient = new QueryClient();
 const applyDir = (lang: string, dir: 'rtl' | 'ltr') => { document.documentElement.lang = lang; document.documentElement.dir = dir; };
@@ -51,7 +51,7 @@ function Shell({ session }: { session: SessionView }) {
                   <aside className="lb-side">
                     <div className="brand"><img className="brand-emblem" src={emblem} alt="" /><div><b>{text(adminTitle)}</b></div></div>
                     {platformNav.map((n) => link(n.to, text(n.label)))}
-                    {session.admin ? link('/platform-users', t('users.title')) : null}
+                    {session.admin ? adminOnlyNav.map((n) => link(n.to, t(n.label))) : null}
                     {modules.filter((m) => m.routes.length).map((m) => (
                       <div key={m.key}>
                         <div className="section-label"><span>{text(m.name)}</span></div>

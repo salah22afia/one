@@ -21,16 +21,28 @@ Status: ✅ built · ⬜ planned (slice in brackets)
 | Locations: country, weekend days, timezone | Operational | fixed Fri/Sat, Riyadh | ⬜ [0] |
 | Default SLA per step, escalation threshold (80%), second-approval SLA (48 h) | Operational | constants | ⬜ [0] |
 | Request id pattern, document numbering, form codes, letterhead | Operational | constants | ⬜ [0] |
-| Expiry alert window (30 days) | Operational | constant | ⬜ [0] |
+| Expiry alert window (30 days): documents and family documents flagged "expiring" on Me | Operational | constant | ⬜ [0] (a constant in `@usp/api-client` today) |
 | Currencies | Operational | SAR constant | ⬜ [4] |
 | Notification triggers: channel defaults (in-app / push / email) and wording (per language) | Operational | 32 fixed triggers | ⬜ [0] |
+
+## Me (Slice 1.3)
+
+| Setting | Kind | Prototype today | Status |
+|---|---|---|---|
+| Digital card QR: signing secret, how long a code stays valid (default 24 h) | Environment `USP_CARD_SECRET` (defaults to `USP_VERIFY_SECRET`), `USP_CARD_CODE_VALIDITY` | decorative QR | ✅ |
+| How many months of payslips "My pay" lists (1–36, default 12) | Environment `USP_PAYSLIP_MONTHS` | 3 seeded | ✅ |
+| SAP paths of the self-service reads (SAP-002 … 005) | Environment (`usp.sap.paths.*` in application.yml) | — | ✅ |
+| Each person's language, appearance and text size | Per person (Me › Settings; `settings.person_preference`), not an administrator setting | device only | ✅ |
+| Which widgets Me shows, in which order | Code (each module adds its own; order in its manifest) | hard-coded | — (make operational with the Home widgets in 1.5 if wanted) |
 
 ## Home & catalogue
 
 | Setting | Kind | Prototype today | Status |
 |---|---|---|---|
-| Catalogue domains and services (names, icons, order, wave / visibility) | Operational | seed array | ⬜ [1] |
-| Home services dock (which services, order) | Operational | hard-coded | ⬜ [1] |
+| Catalogue domains: name and description (per language), icon, colour, order | Operational (admin portal → Service catalogue; logged in `catalog.change_log`) | seed array | ✅ `catalog.domain` |
+| Catalogue services: domain, name, what it covers, who requests it, where it ends, search words (per language), how often requested, order, status — available / wave 2 / wave 3 / later / hidden / merged into another. Added with a new code; never deleted (hidden instead). "Available" only for a service that is coded or configured; a service on the dock must stay available; taking a service out of "available" stops new requests at once (the server refuses them; requests in flight continue) | Operational (same screen and log) | seed array | ✅ `catalog.service` (catalogue 1.0 loaded by migration) |
+| Home services dock: which available services, their order, short label (per language), icon, colour; at most `USP_CATALOG_DOCK_MAX` (default 4), then "Services" | Operational (same screen and log; saved as a whole, with its version) | hard-coded | ✅ `catalog.dock_item` (Home draws it in [1.5]) |
+| How many catalogue changes the admin screen lists | Environment `USP_CATALOG_LOG_SIZE` (default 200) | — | ✅ |
 | Home widgets available / default order | Operational | hard-coded | ⬜ [1] |
 
 ## Service designer (CAP-02)
@@ -42,6 +54,9 @@ Status: ✅ built · ⬜ planned (slice in brackets)
 | Registers (expiry, renewal) | Versioned | ⬜ [2] |
 | SAP bindings for service outputs / profile fields (contract bindings) | Versioned | ⬜ [2] |
 | Service templates, clone, import/export | Operational | ⬜ [2] |
+| Per step: the decisions its holder may take (`decisions`: approve / return / reject, done, receive); default = the prototype's (approval steps approve, return, reject; fulfilment steps done) | Versioned (with the service) | ✅ in `config-packages` today; designer UI [2] |
+| Per service: when the requester may withdraw (`withdraw`: `beforeDecision` = while nobody else has decided, the default; `never`) | Versioned (with the service) | ✅ in `config-packages` today; designer UI [2] |
+| Per service: icon on request rows and tasks (`icon`, a UI-kit icon name) | Versioned (with the service) | ✅ in `config-packages` today; designer UI [2] |
 
 ## Leave policy (TM-01)
 
@@ -71,4 +86,9 @@ Status: ✅ built · ⬜ planned (slice in brackets)
 | Kinds (news, circular, story), acknowledgement rules, limits | Versioned | ⬜ [5] |
 
 ## Deliberately not configurable
-SAP connection (URL, client, timeouts) are deployment environment variables, not admin screens. Session and login-throttle limits are security settings owned by operations.
+SAP connection (URL, client, timeouts, `USP_SAP_MAX_PARALLEL` — how many SAP calls one list page may run at once) are
+deployment environment variables, not admin screens. Session and login-throttle limits are security settings owned by
+operations. List page sizes (`usp.requests.page-size` / `max-page-size`) and the length limits of decision notes and
+references (`usp.workflow.note-max-length` / `ref-max-length`) are deployment settings in `application.yml`.
+A reason is always required to return or reject (platform rule, AB-34), and a returned request always goes back to its
+requester (the prototype's rule; returning to an earlier step is in the requirements, AB-52, but not in the prototype).

@@ -1,4 +1,5 @@
 import type { MobileModule } from '../../module';
+import { BalancesWidget } from './features/balances/widget';
 
 export const timeleave: MobileModule = {
   key: "timeleave",
@@ -7,6 +8,8 @@ export const timeleave: MobileModule = {
     { href: '/timeleave/leave-request', feature: "leave-request", serviceId: "TM-01", name: { ar: "طلب إجازة", en: "Leave request" } },
     { href: '/timeleave/leave-cancellation', feature: "leave-cancellation", serviceId: "TM-01C", name: { ar: "إلغاء إجازة معتمدة", en: "Leave cancellation" } },
     { href: '/timeleave/leave-history', feature: "leave-history", name: { ar: "سجل إجازاتي", en: "Leave history" } },
+    { href: '/timeleave/balances', feature: "balances", name: { ar: "أرصدتي", en: "My balances" } },
     // @gen:screens
   ],
+  meWidgets: [{ key: 'balances', order: 30, Component: BalancesWidget }],
 };

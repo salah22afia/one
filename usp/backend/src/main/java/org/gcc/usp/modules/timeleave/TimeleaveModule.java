@@ -19,6 +19,7 @@ class TimeleaveModule {
                         FeatureDescriptor.coded("timeleave.leave-request", "TM-01", Kind.SERVICE, LocalizedText.arEn("طلب إجازة", "Leave request")),
                         FeatureDescriptor.coded("timeleave.leave-cancellation", "TM-01C", Kind.SERVICE, LocalizedText.arEn("إلغاء إجازة معتمدة", "Leave cancellation")),
                         FeatureDescriptor.coded("timeleave.leave-history", null, Kind.VIEW, LocalizedText.arEn("سجل إجازاتي", "Leave history")),
+                        FeatureDescriptor.coded("timeleave.balances", null, Kind.VIEW, LocalizedText.arEn("أرصدتي", "My balances")),
                         FeatureDescriptor.coded("timeleave.leave-policy", null, Kind.POLICY, LocalizedText.arEn("سياسة الإجازات", "Leave policy")),
                         FeatureDescriptor.coded("timeleave.leave-operations", null, Kind.POLICY, LocalizedText.arEn("تشغيل الإجازات", "Leave operations"))
                         // @gen:features

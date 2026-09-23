@@ -44,12 +44,38 @@ public class ServiceDefinitions {
         return Optional.ofNullable(byId.get(id));
     }
 
+    /**
+     * The exact version a request was submitted with (A1): its data is validated against that version only. Until the
+     * admin config store keeps every version (§7.10), only the active one is available.
+     */
+    public Optional<ServiceDefinition> find(String id, int version) {
+        return find(id).filter(d -> d.version() == version);
+    }
+
     ServiceDefinition parse(JsonNode n) {
-        return new ServiceDefinition(n.path("id").asString(), n.path("module").asString(), n.path("feature").asString(),
+        return check(new ServiceDefinition(n.path("id").asString(), n.path("module").asString(), n.path("feature").asString(),
             n.path("version").asInt(1), json.treeToValue(n.path("name"), LocalizedText.class),
             n.hasNonNull("next") ? json.treeToValue(n.get("next"), LocalizedText.class) : null,
+            n.hasNonNull("icon") ? n.get("icon").asString() : null,
+            n.hasNonNull("withdraw") ? n.get("withdraw").asString() : ServiceDefinition.WITHDRAW_BEFORE_DECISION,
             list(n.path("fields"), ServiceDefinition.FieldDef[].class), list(n.path("rules"), ServiceDefinition.RuleDef[].class),
-            list(n.path("workflow").path("steps"), ServiceDefinition.StepDef[].class), n);
+            list(n.path("workflow").path("steps"), ServiceDefinition.StepDef[].class), n));
+    }
+
+    /** Refuses a definition the runtime could not honour, at load time rather than on a live request. */
+    private static ServiceDefinition check(ServiceDefinition def) {
+        if (!List.of(ServiceDefinition.WITHDRAW_BEFORE_DECISION, ServiceDefinition.WITHDRAW_NEVER).contains(def.withdraw()))
+            throw new IllegalStateException(def.id() + ": withdraw must be 'beforeDecision' or 'never', not '" + def.withdraw() + "'");
+        for (var s : def.steps()) {
+            if (s.decisions() == null) continue;
+            var allowed = ServiceDefinition.DECISIONS.get(s.mode());
+            if (allowed == null) throw new IllegalStateException(def.id() + "/" + s.key() + ": a " + s.mode() + " step takes no decisions");
+            if (!allowed.containsAll(s.decisions()))
+                throw new IllegalStateException(def.id() + "/" + s.key() + ": decisions " + s.decisions() + " are not all in " + allowed);
+            if (!s.decisions().contains(allowed.getFirst()))
+                throw new IllegalStateException(def.id() + "/" + s.key() + ": decisions must include '" + allowed.getFirst() + "'");
+        }
+        return def;
     }
 
     private <T> List<T> list(JsonNode n, Class<T[]> type) {

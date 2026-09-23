@@ -1,12 +1,12 @@
 /* The prototype's base components for React Native, with the same tones, radii and type as @usp/ui-web. */
 import type { ReactNode } from 'react';
-import { Image, Pressable, RefreshControl, ScrollView, Text, View, type TextStyle } from 'react-native';
+import { Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, type TextStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { REQUEST_STATUS, STEP_STATUS, type RequestStatus, type StepStatus } from '@usp/api-client';
+import type { RequestStatus } from '@usp/api-client';
 import { useI18n } from '@usp/i18n';
 import { I, type IconName } from './icons';
-import { font, gutter, radius, type, useTheme } from './theme';
+import { font, gutter, radius, type, useTextScale, useTheme } from './theme';
 import emblem from '../../assets/emblem.png';
 
 
@@ -15,8 +15,8 @@ export const colors = { tint: '#0b4a2f', ok: '#2e7d4f', danger: '#b3352c', warn:
 
 /** Text in Cairo at a prototype weight. */
 export function T({ children, weight = 'regular', size = type.body, color, style }: { children: ReactNode; weight?: keyof typeof font; size?: number; color?: string; style?: TextStyle }) {
-  const th = useTheme();
-  return <Text style={[{ fontFamily: font[weight], fontSize: size, color: color ?? th.fg, textAlign: 'auto' }, style]}>{children}</Text>;
+  const th = useTheme(); const scale = useTextScale(); const lineHeight = scale === 1 ? undefined : StyleSheet.flatten(style)?.lineHeight;
+  return <Text style={[{ fontFamily: font[weight], fontSize: size * scale, color: color ?? th.fg, textAlign: 'auto' }, style, lineHeight ? { lineHeight: lineHeight * scale } : null]}>{children}</Text>;
 }
 
 export function Card({ children }: { children: ReactNode }) {
@@ -25,14 +25,14 @@ export function Card({ children }: { children: ReactNode }) {
 }
 
 type Tone = '' | 'tint' | 'ok' | 'warn' | 'danger' | 'info' | 'gold' | 'done';
-/** The prototype's pill tones; with {@code status} it shows a request/step status as the web does. */
-export function Pill({ status, tone = '', icon, children }: { status?: RequestStatus | StepStatus; tone?: Tone; icon?: IconName; children?: ReactNode }) {
-  const th = useTheme(); const { text } = useI18n();
+/** The prototype's pill tones; with {@code status} it shows a request status as the web does (statusTone). */
+export function Pill({ status, tone = '', icon, children }: { status?: RequestStatus; tone?: Tone; icon?: IconName; children?: ReactNode }) {
+  const th = useTheme(); const { t } = useI18n();
   let tn = tone; let ic = icon; let label = children;
   if (status) {
-    label = text((REQUEST_STATUS as Record<string, { ar: string; en: string }>)[status] ?? STEP_STATUS[status as StepStatus]);
-    [tn, ic] = status === 'in_review' || status === 'current' ? ['tint', undefined] : status === 'returned' ? ['warn', 'ret'] : status === 'waiting' ? ['warn', undefined]
-      : status === 'rejected' ? ['danger', 'x'] : status === 'completed' || status === 'done' ? ['done', 'check'] : ['', undefined];
+    label = t(`status.${status}`);
+    [tn, ic] = status === 'in_review' ? ['tint', undefined] : status === 'returned' ? ['warn', 'ret'] : status === 'rejected' ? ['danger', 'x']
+      : status === 'completed' ? ['done', 'check'] : ['', undefined];
   }
   const [bg, fg] = { '': [th.bgInset, th.fg2], tint: [th.tintSoft, th.tint], ok: [th.okSoft, th.ok], warn: [th.warnSoft, th.warn], danger: [th.dangerSoft, th.danger], info: [th.infoSoft, th.info], gold: [th.goldSoft, th.gold], done: ['transparent', th.fg3] }[tn];
   const Ic = ic ? I[ic] : null;
@@ -45,15 +45,15 @@ export function Pill({ status, tone = '', icon, children }: { status?: RequestSt
 }
 
 /** Buttons: primary (deep green), soft, secondary, danger; {@code plain} is the prototype's quiet button. */
-export function Button({ title, onPress, kind = 'primary', disabled, icon }: { title: string; onPress: () => void; kind?: 'primary' | 'soft' | 'secondary' | 'danger' | 'plain'; disabled?: boolean; icon?: IconName }) {
+export function Button({ title, onPress, kind = 'primary', disabled, icon, small }: { title: string; onPress: () => void; kind?: 'primary' | 'soft' | 'secondary' | 'danger' | 'plain'; disabled?: boolean; icon?: IconName; small?: boolean }) {
   const th = useTheme();
   const [bg, fg] = { primary: [th.tint, th.tintFg], soft: [th.tintSoft, th.tint], secondary: [th.bgElev, th.fg], danger: [th.dangerSoft, th.danger], plain: ['transparent', th.tint] }[kind];
   const Ic = icon ? I[icon] : null;
   return (
     <Pressable disabled={disabled} onPress={onPress} accessibilityRole="button"
-      style={({ pressed }) => ({ flexDirection: 'row', gap: 8, backgroundColor: bg, borderRadius: 14, paddingVertical: 12, paddingHorizontal: 20, opacity: disabled ? 0.45 : 1, alignItems: 'center', justifyContent: 'center', transform: [{ scale: pressed ? 0.97 : 1 }], borderWidth: kind === 'secondary' ? 1 : 0, borderColor: th.hair })}>
-      {Ic ? <Ic size={18} color={fg} strokeWidth={2} /> : null}
-      <T weight="heavy" size={type.callout} color={fg}>{title}</T>
+      style={({ pressed }) => ({ flexDirection: 'row', gap: small ? 4 : 8, backgroundColor: bg, borderRadius: small ? 999 : 14, paddingVertical: small ? 6 : 12, paddingHorizontal: small ? 12 : 20, opacity: disabled ? 0.45 : 1, alignItems: 'center', justifyContent: 'center', transform: [{ scale: pressed ? 0.97 : 1 }], borderWidth: kind === 'secondary' ? 1 : 0, borderColor: th.hair })}>
+      {Ic ? <Ic size={small ? 14 : 18} color={fg} strokeWidth={2} /> : null}
+      <T weight="heavy" size={small ? type.foot : type.callout} color={fg}>{title}</T>
     </Pressable>
   );
 }
