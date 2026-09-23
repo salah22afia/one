@@ -1,0 +1,280 @@
+/* v0.15 مصمّم الخدمات (CAP-02): الدليل، وصفحة تصميم الخدمة بمعاينتها الحية، ونموذج الخدمة المهيّأة — على رموز البوابة ومكوّناتها نفسها */
+
+/* ——— الدليل ——— */
+.dz-tools { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.dz-row { gap: 8px; }
+.dz-row-main { display: flex; align-items: center; gap: 12px; width: 100%; }
+.dz-row-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-inline-start: 52px; }
+.dz-row-meta .btn.sm { margin-inline-start: auto; }
+.dz-row.cfg .cell-title { color: var(--tint); }
+.cell-code { font-size: var(--t-foot); color: var(--fg-3); margin-inline-start: 6px; font-weight: 600; letter-spacing: 0.02em; }
+.lb-head.sm { margin: 14px 0 6px; }
+.lb-head.sm h2 { font-size: var(--t-sub); }
+
+/* ——— صفحة التصميم: على الحاسوب عمودان — المحرر والمعاينة الحية اللاصقة ——— */
+.dzs { max-width: 1180px; }
+.dzs.split { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 28px; align-items: start; }
+.dzs-main { min-width: 0; }
+.dzs-side { position: sticky; top: 16px; }
+.dz-preview { background: var(--bg-elev); border-radius: 24px; box-shadow: var(--shadow-1); padding: 14px 14px 16px; }
+.dz-preview-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.dz-preview-head b { font-size: var(--t-sub); }
+.dz-as { display: flex; align-items: center; gap: 6px; font-size: var(--t-foot); color: var(--fg-3); font-weight: 700; min-width: 0; }
+.dz-as select { max-width: 220px; }
+/* الإطار: حاوية باسم التطبيق نفسه فتقرأ الشاشة عرض الهاتف (container queries) — شاشة الموظف نفسها لا صورة عنها */
+.dz-phone { width: 100%; max-width: 390px; margin: 0 auto; height: 640px; border-radius: 34px; background: var(--bg); box-shadow: 0 0 0 1px var(--hair), 0 0 0 9px var(--fg), 0 18px 40px rgba(0, 0, 0, 0.22); overflow: hidden; container-type: inline-size; container-name: app; position: relative; }
+.dz-phone-in { height: 100%; overflow: auto; overscroll-behavior: contain; padding: 22px 0 24px; }
+.dz-phone-in .page { padding-bottom: 32px; }
+.dz-phone-in .topbar, .dz-phone-in .lb-topbar { position: static; }
+.dz-phone-in .success { min-height: 420px; }
+
+/* ——— محرر الخدمة ——— */
+.dz-ed { padding: 12px 16px 10px; }
+.dz-ed label.sw, .type-editor label.sw { flex-direction: row; align-items: center; justify-content: space-between; flex-basis: 100%; font-size: var(--t-sub); color: var(--fg); gap: 12px; }
+.dz-ed label.sw > span:first-child, .type-editor label.sw > span:first-child { display: flex; flex-direction: column; gap: 2px; }
+.dz-ic { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-inset); color: var(--fg-2); display: grid; place-items: center; }
+.dz-ic svg { width: 20px; height: 20px; }
+.dz-ic.on { background: var(--tint); color: #fff; }
+.dz-tone { width: 34px; height: 34px; border-radius: 11px; outline: 2px solid transparent; outline-offset: 2px; }
+.dz-tone.on { outline-color: var(--tint); }
+.dz-section { margin-bottom: 10px; }
+.dz-section.off { opacity: 0.6; }
+.dz-sec-head { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px 4px; }
+.dz-sec-head > .cell-lead { margin-top: 18px; }
+.dz-sec-titles { flex: 1; min-width: 0; padding: 0; }
+.dz-fields { padding: 4px 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+.dz-field { display: flex; align-items: center; gap: 4px; }
+.dz-field.off { opacity: 0.55; }
+.dz-field-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 14px; text-align: start; color: var(--fg); }
+.dz-field-main .cell-main { display: block; }
+.dz-field-main .cell-title { display: block; }
+.dz-field-main .chev { flex: none; width: 18px; height: 18px; color: var(--fg-4); }
+.dz-field-main:active { background: var(--bg-inset); }
+.dz-field-tools { display: flex; flex: none; }
+.dz-field-tools .icon-btn { width: 34px; height: 34px; border-radius: 10px; color: var(--fg-3); }
+.dz-field-tools .icon-btn svg { width: 18px; height: 18px; }
+.dz-field-tools svg.rot-up { transform: rotate(-90deg); }
+.dz-field-tools svg.rot-down { transform: rotate(90deg); }
+html[dir="ltr"] .dz-field-tools svg.rot-up { transform: rotate(90deg); }
+html[dir="ltr"] .dz-field-tools svg.rot-down { transform: rotate(-90deg); }
+.dz-unnamed { color: var(--fg-3); font-style: normal; font-weight: 600; }
+.dz-add { margin: 6px 8px 0; width: calc(100% - 16px); border-radius: 14px; padding: 12px 14px; }
+.dz-presets { display: flex; flex-direction: column; gap: 6px; padding: 0 4px 10px; }
+.dz-route { padding-top: 4px; }
+.dz-cond { border-top: 1px dashed var(--hair); margin-top: 6px; padding-top: 10px; }
+.dz-opt { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; align-items: center; flex-basis: 100%; }
+.dz-opt.off { opacity: 0.55; }
+.dz-opt input { width: 100%; }
+.dz-opt input[type="date"] { max-width: 150px; }
+
+/* ——— لوحة الحقول ——— */
+.dz-palette { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dz-pal { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: start; background: var(--bg-inset); border-radius: 16px; padding: 12px; min-height: 108px; }
+.dz-pal b { font-size: var(--t-sub); }
+.dz-pal > span:last-child { font-size: var(--t-foot); color: var(--fg-3); line-height: 1.35; }
+
+/* ——— نموذج الخدمة المهيّأة (شاشة الموظف) ——— */
+.cfr .cf-sec { padding-top: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.cfr .cf-sec .cell-sub { margin: 0; font-weight: 500; }
+.cf-money { display: flex; align-items: center; gap: 8px; }
+.cf-money input { flex: 1; min-width: 0; }
+.cf-cur { font-size: var(--t-foot); font-weight: 800; color: var(--fg-3); letter-spacing: 0.04em; }
+.cf-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cf-range label { display: flex; flex-direction: column; gap: 4px; font-size: var(--t-foot); font-weight: 700; color: var(--fg-3); }
+.cf-seg { margin-top: 2px; }
+.cf-chips { padding-top: 2px; }
+.cf-files { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cf-files .cell-sub { flex-basis: 100%; margin: 0; }
+.cf-check { padding: 12px 16px; border-top: 1px solid var(--hair-2); display: flex; flex-direction: column; gap: 6px; }
+.cf-check label.sw { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; font-size: var(--t-body); }
+.cf-check label.sw > span:first-child { display: flex; flex-direction: column; gap: 2px; }
+.cf-check .cell-sub { margin: 0; }
+.cf-check.bad { box-shadow: inset 3px 0 0 var(--danger); }
+.field-err { color: var(--danger); font-size: var(--t-foot); font-weight: 600; }
+.cf-for { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.cf-for .field { padding-inline: 0; border-top: 0; }
+.cfr.embedded .lp-top { display: none; }
+
+@container app (min-width: 900px) {
+  .dz-tools { flex-direction: row; align-items: center; }
+  .dz-tools .search { flex: 1; }
+  .dz-row-meta { padding-inline-start: 0; margin-inline-start: 52px; }
+  .dz-palette { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ═══ v0.16 خريطة الحالات الكاملة: النموذج الموسّع، ونماذج الخطوات، والمخرجات، والمحاكاة، والمستأجرون، والعقود، والسجلات ═══ */
+
+/* ——— حقول الموظف الجديدة ——— */
+.cf-sign { padding: 12px 16px; border-top: 1px solid var(--hair-2); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.cf-sign-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.cf-sign-txt b { font-size: var(--t-body); }
+.cf-sign .cell-sub { margin: 0; }
+.cf-signed { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 700; font-size: var(--t-foot); }
+.cf-signed svg { width: 18px; height: 18px; }
+.cf-sign.on { background: color-mix(in oklab, var(--green) 6%, transparent); }
+.cf-sign.bad { box-shadow: inset 3px 0 0 var(--danger); }
+.cf-profile { padding: 10px 16px; border-top: 1px solid var(--hair-2); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; }
+.cf-profile .k { font-size: var(--t-foot); font-weight: 700; color: var(--fg-3); display: inline-flex; align-items: center; gap: 6px; }
+.cf-profile .k svg { width: 16px; height: 16px; }
+.cf-profile .v { font-weight: 700; color: var(--fg); text-align: end; }
+.cf-profile .cell-sub { grid-column: 1 / -1; margin: 0; }
+.cf-profile.calc .v { color: var(--tint); font-size: var(--t-sub); }
+.cf-scale { display: flex; flex-direction: column; gap: 6px; }
+.cf-scale-btns { display: flex; gap: 6px; }
+.cf-scale-b { flex: 1; min-width: 44px; min-height: 48px; border-radius: 14px; background: var(--bg-inset); color: var(--fg-4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: var(--t-foot); font-weight: 800; transition: transform 0.12s ease, background 0.15s ease, color 0.15s ease; }
+.cf-scale-b svg { width: 20px; height: 20px; }
+.cf-scale-b.lit { color: var(--gold); }
+.cf-scale-b.on { background: var(--gold); color: #fff; transform: translateY(-2px); }
+.cf-scale-lbl { display: flex; justify-content: space-between; font-size: var(--t-foot); color: var(--fg-3); font-weight: 600; }
+.cf-table { display: flex; flex-direction: column; gap: 8px; }
+.cf-row { border: 1px solid var(--hair); border-radius: 14px; padding: 8px 10px 10px; background: var(--bg-inset); display: flex; flex-direction: column; gap: 6px; }
+.cf-row-head { display: flex; align-items: center; justify-content: space-between; }
+.cf-row-head b { font-size: var(--t-foot); color: var(--fg-3); }
+.cf-row-head .icon-btn { width: 32px; height: 32px; }
+.cf-row-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+.cf-col { display: flex; flex-direction: column; gap: 3px; font-size: var(--t-foot); font-weight: 700; color: var(--fg-3); min-width: 0; }
+.cf-col input, .cf-col select { width: 100%; }
+.cf-table-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cf-total { display: inline-flex; align-items: baseline; gap: 8px; font-size: var(--t-foot); color: var(--fg-3); font-weight: 700; }
+.cf-total b { font-size: var(--t-sub); color: var(--fg); }
+.cf-before { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-elev); border-radius: 18px; padding: 12px 14px; box-shadow: var(--shadow-1); margin-bottom: 10px; }
+.cf-before b { display: block; font-size: var(--t-sub); margin-bottom: 4px; }
+.cf-before ul { margin: 0; padding-inline-start: 18px; color: var(--fg-2); font-size: var(--t-foot); line-height: 1.6; }
+.cf-reasons { margin: 6px 0 0; padding-inline-start: 18px; font-weight: 500; }
+.cf-ask { display: flex; align-items: center; gap: 6px; padding: 8px 4px 0; }
+.cf-ask svg { width: 16px; height: 16px; }
+.cf-pager { display: flex; justify-content: space-between; gap: 10px; }
+.cf-pager .btn { min-width: 44%; }
+.cf-pager .back { transform: scaleX(-1); }
+.cf-tbl-view { overflow-x: auto; padding: 4px 6px 8px; }
+.cf-tbl-view table { width: 100%; }
+/* لوح الخطوة: خيارات القرار بطاقاتٍ بأثرها، وقائمة التحقق */
+.cf-outcomes { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.cf-outcome { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: start; padding: 12px 14px; border-radius: 16px; background: var(--bg-elev); box-shadow: var(--shadow-1); border: 2px solid transparent; color: var(--fg); min-height: 56px; }
+.cf-outcome b { font-size: var(--t-sub); }
+.cf-outcome > span { font-size: var(--t-foot); color: var(--fg-3); font-weight: 600; }
+.cf-outcome.on { border-color: var(--green); background: color-mix(in oklab, var(--green) 8%, var(--bg-elev)); }
+.cf-outcome.t-warn.on { border-color: var(--gold); background: color-mix(in oklab, var(--gold) 12%, var(--bg-elev)); }
+.cf-outcome.t-danger.on { border-color: var(--danger); background: color-mix(in oklab, var(--danger) 8%, var(--bg-elev)); }
+.cf-outcome.t-gold.on { border-color: var(--gold); }
+.cf-checkrow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--hair-2); font-size: var(--t-body); cursor: pointer; }
+.cf-checkrow:first-child { border-top: 0; }
+.cf-checkrow input { width: 22px; height: 22px; accent-color: var(--green); flex: none; }
+.pill.t-ok { background: color-mix(in oklab, var(--green) 14%, transparent); color: var(--green); }
+.pill.t-warn, .pill.t-gold { background: color-mix(in oklab, var(--gold) 18%, transparent); color: var(--gold-deep, #8a6a1c); }
+.pill.t-danger { background: color-mix(in oklab, var(--danger) 12%, transparent); color: var(--danger); }
+/* المسار: تفاصيل الخطوة */
+.rail-details { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.rail-kv { display: inline-flex; flex-direction: column; gap: 0; background: var(--bg-inset); border-radius: 10px; padding: 4px 8px; font-size: var(--t-foot); max-width: 100%; }
+.rail-kv i { font-style: normal; color: var(--fg-3); font-weight: 600; font-size: 11px; }
+.rail-kv b { font-weight: 700; color: var(--fg); }
+.rail-kv.edit b s { color: var(--fg-4); }
+.rail-tag { display: inline-flex; margin-inline-start: 6px; color: var(--tint); vertical-align: middle; }
+.rail-tag svg { width: 14px; height: 14px; }
+
+/* ——— المصمّم: الشرط المركّب ——— */
+.dz-cond-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: var(--t-foot); font-weight: 800; color: var(--fg-2); margin-bottom: 4px; }
+.dz-cond-head .cell-sub { flex-basis: 100%; margin: 0; font-weight: 500; }
+.dz-cond-row { padding: 4px 0 6px; align-items: flex-end; }
+.dz-cond-row label { flex: 1 1 150px; }
+.dz-cond-row .icon-btn { width: 34px; height: 34px; flex: none; margin-bottom: 4px; }
+.dz-cond + .dz-cond { margin-top: 10px; }
+/* ورقة الحقل: أعمدة الجدول */
+.dz-col { display: grid; grid-template-columns: 110px 1fr 1fr auto auto; gap: 6px; align-items: center; flex-basis: 100%; }
+.dz-col.off { opacity: 0.55; }
+.dz-col input, .dz-col select { width: 100%; min-width: 0; }
+.dz-col-req { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-foot); font-weight: 700; color: var(--fg-3); white-space: nowrap; }
+.dz-col-req input { width: 18px; height: 18px; accent-color: var(--green); }
+/* المسار: أنواع الخطوات وخيارات القرار والشرائح والعقود */
+.dz-modes { flex-wrap: wrap; }
+.dz-modes button { flex: 1 1 auto; }
+.rt-step.grouped { border-inline-start: 3px solid var(--tint); }
+.rt-step.review .rp-n { background: var(--gold); }
+.rt-step.input .rp-n, .rt-step.wait .rp-n { background: var(--fg-3); }
+.rt-step.system .rp-n { background: var(--tint); }
+.dz-step-conds { padding: 0 14px 6px; }
+.dz-outcome { display: grid; grid-template-columns: 1fr 1fr 120px 100px auto; gap: 6px; align-items: center; flex-basis: 100%; }
+.dz-outcome.off { opacity: 0.55; }
+.dz-outcome input, .dz-outcome select { width: 100%; min-width: 0; }
+.dz-bands { display: flex; flex-direction: column; gap: 6px; }
+.dz-band { border: 1px dashed var(--hair); border-radius: 12px; padding: 6px 10px; }
+.dz-band-upto { display: flex; align-items: center; gap: 8px; }
+.dz-band-upto input { max-width: 140px; }
+.dz-mapping { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+.dz-mapping .section-label { grid-column: 1 / -1; }
+.dz-mapping label { display: flex; flex-direction: column; gap: 3px; font-size: var(--t-foot); font-weight: 700; color: var(--fg-3); min-width: 0; }
+.dz-mapping em { font-weight: 500; }
+.danger-txt { color: var(--danger) !important; }
+/* المخرجات والقالب */
+.dz-output { margin-bottom: 10px; }
+.dz-output.off { opacity: 0.6; }
+.dz-output .dz-sec-head { align-items: center; padding-bottom: 8px; }
+.dz-output .dz-sec-head > .cell-lead { margin-top: 0; }
+.dz-output .dz-sec-head .cell-main { flex: 1; min-width: 0; }
+.dz-add-out { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 12px; }
+.dz-template { display: flex; flex-direction: column; gap: 8px; }
+.dz-template > .cell-sub { margin: 0; }
+.dz-para { border: 1px solid var(--hair); border-radius: 12px; padding: 8px 10px; background: var(--bg-inset); display: flex; flex-direction: column; gap: 6px; }
+.dz-para-head { display: flex; align-items: center; justify-content: space-between; font-size: var(--t-foot); color: var(--fg-3); }
+.dz-para-head .icon-btn { width: 30px; height: 30px; }
+.dz-para textarea { width: 100%; font-family: inherit; }
+.dz-tokens { gap: 6px; }
+.dz-tokens .pill { cursor: pointer; }
+/* الإحصاءات */
+.dz-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.dz-stat { background: var(--bg-elev); border-radius: 16px; padding: 12px 14px; box-shadow: var(--shadow-1); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dz-stat b { font-size: 22px; line-height: 1.1; color: var(--fg); }
+.dz-stat span { font-size: var(--t-foot); color: var(--fg-3); font-weight: 600; }
+/* الدليل: سياق المستأجر والأدوات والقوالب */
+.dz-ctx { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 12px; }
+.dz-ctx .chips a.pill { text-decoration: none; }
+.dz-card-wrap { position: relative; }
+.dz-card-tools { position: absolute; inset-inline-end: 44px; top: 10px; display: flex; gap: 2px; }
+.dz-card-tools .icon-btn { width: 32px; height: 32px; border-radius: 10px; color: var(--fg-3); background: var(--bg-inset); }
+.dz-card-tools .icon-btn svg { width: 16px; height: 16px; }
+.pt-card.dz-tpl { cursor: default; }
+.pt-card.dz-tpl .pt-body { gap: 6px; }
+.pt-card.dz-tpl .pt-body > .cell-sub { white-space: normal; line-height: 1.45; }
+
+/* ——— المستأجرون ——— */
+.tn-emblem { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: #fff; font-weight: 900; font-size: 13px; background: var(--green); flex: none; outline: 2px solid transparent; outline-offset: 2px; }
+.tn-emblem.h-gold { background: var(--gold); } .tn-emblem.h-teal { background: #1f7a8c; } .tn-emblem.h-bronze { background: #8a5a2b; } .tn-emblem.h-sage { background: #5f7d5a; } .tn-emblem.h-night { background: #22303c; } .tn-emblem.h-cream { background: #b39a5a; }
+.tn-emblem.on { outline-color: var(--tint); }
+.ptl-card.tn-card .ptl-top { gap: 8px; }
+.tn-envs { display: flex; flex-direction: column; gap: 6px; }
+.tn-env { display: grid; grid-template-columns: 90px 1fr 130px; gap: 6px; align-items: center; }
+.tn-env b { font-size: var(--t-foot); }
+.tn-designer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px dashed var(--hair); }
+.tn-designer > b { flex-basis: 100%; font-size: var(--t-foot); }
+.tn-designer label.sw { flex-basis: auto; }
+
+/* ——— العقود ——— */
+.ct-card { margin-bottom: 10px; }
+.ct-body { padding: 0 14px 12px; display: flex; flex-direction: column; gap: 4px; }
+.ct-body > .cell-sub { margin: 0; }
+.ct-io { display: flex; flex-direction: column; gap: 2px; font-size: var(--t-foot); color: var(--fg-2); }
+.ct-io b { color: var(--fg); }
+
+/* ——— السجلات ——— */
+.rg-row { gap: 8px; }
+.rg-row .dz-row-meta a.btn { text-decoration: none; }
+
+/* ——— المستند: نسخة إلى وفقرات القالب ——— */
+.dp-copy { font-size: 12px; color: var(--fg-2); margin: 0 0 8px; }
+.sh-para { margin: 0 0 10px; line-height: 1.9; }
+
+@container app (min-width: 700px) {
+  .cf-outcomes { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .cf-row-cols { grid-template-columns: repeat(3, 1fr); }
+  .dz-stats { grid-template-columns: repeat(3, 1fr); }
+  .dz-ctx { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+@container app (max-width: 520px) {
+  .dz-col { grid-template-columns: 1fr 1fr; }
+  .dz-col select:first-child { grid-column: 1 / -1; }
+  .dz-outcome { grid-template-columns: 1fr 1fr; }
+  .dz-outcome .icon-btn { grid-column: 2; justify-self: end; }
+  .dz-mapping { grid-template-columns: 1fr; }
+  .tn-env { grid-template-columns: 1fr; }
+  .dz-card-tools { top: auto; bottom: 10px; }
+}

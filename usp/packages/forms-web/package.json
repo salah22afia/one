@@ -1,0 +1,11 @@
+{
+  "name": "@usp/forms-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "scripts": { "typecheck": "tsc -p ." },
+  "dependencies": { "@usp/forms-core": "workspace:*", "@usp/i18n": "workspace:*" },
+  "peerDependencies": { "react": "*" }
+}

@@ -1,0 +1,11 @@
+usp:
+  session:
+    secure-cookie: false
+  security:
+    # Browser clients in dev: web and admin (the Vite proxy rewrites Host, so the backend sees them as cross-origin)
+    # and Expo web (the mobile app in a browser). Once CORS is on, every browser origin must be listed.
+    cors-origins: http://localhost:5173,http://localhost:5174,http://localhost:8081
+  admin:
+    # Dev only: the first platform administrator (temporary password, changed at first sign-in).
+    bootstrap-username: ${USP_BOOTSTRAP_ADMIN_USERNAME:admin}
+    bootstrap-password: ${USP_BOOTSTRAP_ADMIN_PASSWORD:Temporary-Start-2026}

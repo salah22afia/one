@@ -1,0 +1,30 @@
+{
+  "name": "usp",
+  "private": true,
+  "description": "Unified Services Portal: monorepo (backend, web, admin, mobile, shared packages)",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @usp/web dev",
+    "dev:admin": "pnpm --filter @usp/admin dev",
+    "dev:mobile": "pnpm --filter @usp/mobile start",
+    "dev:backend": "cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "eslint .",
+    "gen:module": "node tools/generators/gen.mjs module",
+    "gen:feature": "node tools/generators/gen.mjs feature",
+    "api:generate": "pnpm --filter @usp/api-client generate"
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0",
+    "eslint-plugin-boundaries": "^7.2.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "turbo": "^2.11.2",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0"
+  }
+}

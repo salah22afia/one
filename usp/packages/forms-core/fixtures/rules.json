@@ -1,0 +1,18 @@
+[
+  { "name": "equality on a select value", "rule": { "==": [{ "var": "field" }, "marital"] }, "data": { "field": "marital" }, "expected": true },
+  { "name": "equality false", "rule": { "==": [{ "var": "field" }, "marital"] }, "data": { "field": "mobile" }, "expected": false },
+  { "name": "loose equality number/string", "rule": { "==": [1, "1"] }, "data": {}, "expected": true },
+  { "name": "in list", "rule": { "in": [{ "var": "field" }, ["marital", "card"]] }, "data": { "field": "card" }, "expected": true },
+  { "name": "in list, missing value", "rule": { "in": [{ "var": "field" }, ["marital", "card"]] }, "data": {}, "expected": false },
+  { "name": "ISO date before today", "rule": { "<": [{ "var": "expires" }, { "var": "today" }] }, "data": { "expires": "2026-09-01", "today": "2026-09-21" }, "expected": true },
+  { "name": "ISO date after today", "rule": { "<": [{ "var": "expires" }, { "var": "today" }] }, "data": { "expires": "2027-01-01", "today": "2026-09-21" }, "expected": false },
+  { "name": "date comparison with a missing value is false", "rule": { "<": [{ "var": "expires" }, { "var": "today" }] }, "data": { "today": "2026-09-21" }, "expected": false },
+  { "name": "end before start", "rule": { "<": [{ "var": "to" }, { "var": "from" }] }, "data": { "from": "2026-10-04", "to": "2026-10-02" }, "expected": true },
+  { "name": "numeric greater than", "rule": { ">": [{ "var": "n" }, 5] }, "data": { "n": 7 }, "expected": true },
+  { "name": "numeric string coerced", "rule": { ">": [{ "var": "n" }, 5] }, "data": { "n": "7" }, "expected": true },
+  { "name": "between (3 arguments)", "rule": { "<=": [1, { "var": "n" }, 10] }, "data": { "n": 10 }, "expected": true },
+  { "name": "between out of range", "rule": { "<": [1, { "var": "n" }, 10] }, "data": { "n": 10 }, "expected": false },
+  { "name": "guarded equality on missing values", "rule": { "and": [{ "var": "iban" }, { "==": [{ "var": "iban" }, { "var": "currentIban" }] }] }, "data": {}, "expected": false },
+  { "name": "not of empty string", "rule": { "!": [{ "var": "x" }] }, "data": { "x": "" }, "expected": true },
+  { "name": "boolean field", "rule": { "==": [{ "var": "salary" }, true] }, "data": { "salary": true }, "expected": true }
+]

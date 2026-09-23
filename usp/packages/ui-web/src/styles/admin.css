@@ -1,0 +1,81 @@
+/* v0.18 «مركز الإدارة» + معاينة القالب والمستند في المصمّم (ملاحظتا عمر بعد v0.17) */
+
+/* ——— شريط أقسام الإدارة (في كل شاشة إدارة) ——— */
+.adm-nav { display: flex; flex-wrap: wrap; gap: 6px 6px; padding: 2px 0 12px; }
+.adm-chip { gap: 6px; padding: 6px 12px; font-size: var(--t-foot); font-weight: 700; color: var(--fg-2); background: var(--bg-elev); box-shadow: var(--shadow-1); transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-press); }
+.adm-chip svg { width: 15px; height: 15px; stroke-width: 2; }
+.adm-chip:active { transform: scale(0.97); }
+.adm-chip.on { background: var(--green); color: #fff; box-shadow: none; }
+@container app (max-width: 640px) { .adm-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); } .adm-nav::-webkit-scrollbar { display: none; } .adm-chip { flex: none; } }
+
+/* ——— الشبكة: عمودان على الحاسوب، عمود على الهاتف ——— */
+.adm-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px 24px; }
+@container app (min-width: 1024px) { .adm-grid { grid-template-columns: minmax(0, 1fr) 360px; align-items: start; } .adm-side { position: sticky; top: 76px; } }
+.adm-main, .adm-side { min-width: 0; }
+.adm-focus { margin-bottom: 4px; }
+.adm-focus .fc-txt span { white-space: normal; }
+.adm-quiet { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: var(--r-card); background: var(--bg-elev); box-shadow: var(--shadow-1); color: var(--fg-2); font-weight: 700; }
+.adm-quiet svg { width: 18px; height: 18px; color: var(--ok); stroke-width: 2.2; }
+
+/* بطاقات السياسات */
+.adm-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@container app (max-width: 640px) { .adm-tiles { grid-template-columns: minmax(0, 1fr); } }
+.adm-tile { display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: start; padding: 14px 14px 12px; background: var(--bg-elev); border-radius: 18px; box-shadow: var(--shadow-1); color: var(--fg); min-height: 96px; }
+.adm-tile .qicon { width: 42px; height: 42px; border-radius: 13px; flex: none; }
+.adm-tile-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.adm-tile-txt > b { font-size: var(--t-callout); font-weight: 800; line-height: 1.3; }
+.adm-tile-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.adm-tile-txt small { font-size: 11px; color: var(--fg-3); font-weight: 600; }
+.adm-tile .chev { width: 18px; height: 18px; color: var(--fg-4); flex: none; margin-top: 12px; }
+
+/* الأرقام */
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+.adm-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; border-radius: 16px; background: var(--bg-elev); box-shadow: var(--shadow-1); text-align: center; }
+.adm-stat b { font-size: 1.5rem; font-weight: 800; line-height: 1.1; color: var(--fg); }
+.adm-stat span { font-size: 11px; color: var(--fg-3); font-weight: 700; }
+.adm-stat.bad b { color: var(--danger); }
+.adm-stat.ok b { color: var(--ok); }
+.adm-list .lrow-trail .pill { margin-inline-end: 2px; }
+.adm-foot { padding: 10px 4px 0; }
+
+/* ——— صندوق «أخطأت في إصدار سارٍ؟» مطويّاً ——— */
+.fix-box.folded { padding: 6px 12px; gap: 0; }
+.fix-toggle { display: flex; align-items: center; gap: 10px; width: 100%; text-align: start; padding: 6px 2px; color: inherit; }
+.fix-toggle b { font-size: var(--t-sub); font-weight: 800; }
+.fix-toggle .cell-sub { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fix-toggle .lb-chev { width: 18px; height: 18px; flex: none; color: var(--fg-3); transition: transform var(--dur-fast); }
+.fix-toggle .lb-chev.up { transform: rotate(180deg); }
+
+/* ——— معاينة المستند في المصمّم ——— */
+.dz-prev-mode { margin: 0 0 8px; }
+.dz-docprev { max-height: 640px; overflow: auto; border-radius: 12px; padding: 2px; }
+.dz-docsheet { container-type: inline-size; }
+.dz-docsheet .doc-preview.docsheet { font-size: 11.5px; }
+/* الورقة داخل عمود المعاينة الضيّق على الحاسوب تأخذ تخطيط الهاتف نفسه (الترويسة في صفّين والبيانات في عمودين) — بحسب عرض الحاوية لا الشاشة */
+@container (max-width: 560px) {
+  .dz-docsheet .doc-preview.docsheet { padding: 16px 14px 12px; }
+  .dz-docsheet .docsheet .sh-head { grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .dz-docsheet .docsheet .sh-emblem { grid-column: 1 / -1; justify-self: center; width: 54px; height: 54px; order: -1; }
+  .dz-docsheet .docsheet .sh-org b { font-size: 12.5px; } .dz-docsheet .docsheet .sh-org span { font-size: 9.5px; } .dz-docsheet .docsheet .sh-org small { font-size: 8.5px; }
+  .dz-docsheet .docsheet .sh-en b { font-size: 11px; } .dz-docsheet .docsheet .sh-en span { font-size: 8.5px; } .dz-docsheet .docsheet .sh-en small { font-size: 8px; }
+  .dz-docsheet .docsheet .sh-meta { grid-template-columns: 1fr 1fr; row-gap: 6px; }
+  .dz-docsheet .docsheet .sh-cell:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+  .dz-docsheet .docsheet .sh-title h3 { font-size: 15px; }
+  .dz-docsheet .docsheet .sh-signs { gap: 12px; }
+  .dz-docsheet .docsheet .sh-sig { min-width: 120px; flex-basis: 120px; }
+  .dz-docsheet .docsheet .sh-foot { grid-template-columns: 1fr; text-align: center; gap: 6px; }
+  .dz-docsheet .docsheet .sh-foot .sh-foot-l { justify-content: center; }
+  .dz-docsheet .doc-preview.docsheet table.dt { font-size: 10.5px; }
+  .dz-docsheet .doc-preview.docsheet table.dt th, .dz-docsheet .doc-preview.docsheet table.dt td { padding: 4px 5px; }
+  .dz-docsheet .docsheet .sh-draft { font-size: 44px; }
+}
+.dz-doc-preview { margin-inline-start: auto; }
+.section-label .dz-doc-preview { margin-inline-start: auto; }
+
+/* ——— معاينة القالب في لوح ——— */
+.dz-tplprev-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.dz-phone.dz-phone-sm { height: 560px; max-width: 330px; }
+.dz-tplprev-sum .section-label { padding-top: 4px; }
+
+/* رؤوس الأقسام في الإدارة على الهاتف: الشرح تحت العنوان لا بجانبه */
+@container app (max-width: 640px) { .adm .lb-head { flex-wrap: wrap; } .adm .lb-head .lb-muted { flex-basis: 100%; } }

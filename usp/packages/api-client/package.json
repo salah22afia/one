@@ -1,0 +1,11 @@
+{
+  "name": "@usp/api-client",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": { "typecheck": "tsc -p .", "generate": "openapi-typescript ${USP_API:-http://localhost:8080}/v3/api-docs -o src/schema.d.ts" },
+  "dependencies": { "@usp/i18n": "workspace:*" },
+  "devDependencies": { "openapi-typescript": "^7.13.0" }
+}

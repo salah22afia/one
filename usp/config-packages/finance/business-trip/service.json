@@ -1,0 +1,136 @@
+{
+  "id": "FN-01",
+  "module": "finance",
+  "feature": "business-trip",
+  "version": 1,
+  "name": {
+    "ar": "الانتداب ومهمة العمل",
+    "en": "Business trip & assignment"
+  },
+  "fields": [
+    {
+      "key": "dest",
+      "type": "text",
+      "label": {
+        "ar": "الوجهة",
+        "en": "Destination"
+      },
+      "required": true
+    },
+    {
+      "key": "from",
+      "type": "date",
+      "label": {
+        "ar": "من",
+        "en": "From"
+      },
+      "required": true
+    },
+    {
+      "key": "to",
+      "type": "date",
+      "label": {
+        "ar": "إلى",
+        "en": "To"
+      },
+      "required": true
+    },
+    {
+      "key": "purpose",
+      "type": "textarea",
+      "label": {
+        "ar": "الغرض",
+        "en": "Purpose"
+      },
+      "required": true
+    },
+    {
+      "key": "invitation",
+      "type": "attachment",
+      "label": {
+        "ar": "خطاب الدعوة أو برنامج المهمة",
+        "en": "Invitation letter or programme"
+      }
+    }
+  ],
+  "form": {
+    "pages": [
+      {
+        "title": {
+          "ar": "المهمة",
+          "en": "Assignment"
+        },
+        "fields": [
+          "dest",
+          "from",
+          "to",
+          "purpose",
+          "invitation"
+        ]
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "order",
+      "when": {
+        "<": [
+          {
+            "var": "to"
+          },
+          {
+            "var": "from"
+          }
+        ]
+      },
+      "level": "block",
+      "field": "to",
+      "message": {
+        "ar": "تاريخ النهاية قبل البداية",
+        "en": "End date is before start date"
+      }
+    }
+  ],
+  "workflow": {
+    "steps": [
+      {
+        "key": "manager",
+        "title": {
+          "ar": "اعتماد المدير المباشر",
+          "en": "Line manager approval"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "lineManager"
+        },
+        "slaHours": 24
+      },
+      {
+        "key": "commit",
+        "title": {
+          "ar": "حجز الاعتماد وإصدار القرار",
+          "en": "Budget commitment and decision"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-122"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "post",
+        "title": {
+          "ar": "تسجيل الانتداب وصرف المقدم",
+          "en": "Assignment recorded, advance paid"
+        },
+        "mode": "system",
+        "operation": "sap.pt.recordAttendance"
+      }
+    ]
+  },
+  "next": {
+    "ar": "يعتمده مديرك، ثم تحجز الانتدابات الاعتماد وتصدر القرار، ثم يُصرف المقدم وتُسجَّل المهمة في النظام.",
+    "en": "Your manager approves; assignments commit the budget and issue the decision; then the advance is paid and the trip is recorded in the system."
+  }
+}

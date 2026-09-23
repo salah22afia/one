@@ -1,0 +1,152 @@
+{
+  "id": "MD-05",
+  "module": "mydata",
+  "feature": "document-update",
+  "version": 1,
+  "name": {
+    "ar": "تحديث مستند",
+    "en": "Update a document"
+  },
+  "fields": [
+    {
+      "key": "doc",
+      "type": "select",
+      "label": {
+        "ar": "المستند",
+        "en": "Document"
+      },
+      "required": true,
+      "options": [
+        {
+          "value": "passport",
+          "label": {
+            "ar": "جواز السفر",
+            "en": "Passport"
+          }
+        },
+        {
+          "value": "nationalId",
+          "label": {
+            "ar": "الهوية الوطنية",
+            "en": "National ID"
+          }
+        },
+        {
+          "value": "adminCard",
+          "label": {
+            "ar": "البطاقة الإدارية",
+            "en": "Administrative card"
+          }
+        },
+        {
+          "value": "licence",
+          "label": {
+            "ar": "رخصة القيادة",
+            "en": "Driving licence"
+          }
+        },
+        {
+          "value": "insurance",
+          "label": {
+            "ar": "بطاقة التأمين الطبي",
+            "en": "Medical insurance card"
+          }
+        }
+      ]
+    },
+    {
+      "key": "number",
+      "type": "text",
+      "label": {
+        "ar": "الرقم الجديد",
+        "en": "New number"
+      },
+      "required": true
+    },
+    {
+      "key": "expires",
+      "type": "date",
+      "label": {
+        "ar": "تاريخ الانتهاء",
+        "en": "Expiry date"
+      },
+      "required": true
+    },
+    {
+      "key": "copy",
+      "type": "attachment",
+      "label": {
+        "ar": "صورة المستند الجديد",
+        "en": "Copy of the new document"
+      },
+      "required": true
+    }
+  ],
+  "form": {
+    "pages": [
+      {
+        "title": {
+          "ar": "المستند",
+          "en": "Document"
+        },
+        "fields": [
+          "doc",
+          "number",
+          "expires",
+          "copy"
+        ]
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "expired",
+      "when": {
+        "<": [
+          {
+            "var": "expires"
+          },
+          {
+            "var": "today"
+          }
+        ]
+      },
+      "level": "block",
+      "field": "expires",
+      "message": {
+        "ar": "تاريخ الانتهاء قبل اليوم",
+        "en": "Expiry date is before today"
+      }
+    }
+  ],
+  "workflow": {
+    "steps": [
+      {
+        "key": "review",
+        "title": {
+          "ar": "مراجعة المستند الجديد",
+          "en": "Review of the new document"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-211"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "post",
+        "title": {
+          "ar": "تحديث المستند وتاريخ انتهائه",
+          "en": "Document and expiry updated"
+        },
+        "mode": "system",
+        "operation": "sap.pa.updateDocument"
+      }
+    ]
+  },
+  "next": {
+    "ar": "تراجعه شؤون الموظفين ثم يُحدَّث المستند وتاريخه في النظام المرجعي.",
+    "en": "Personnel affairs review it, then the document and its expiry are updated in the system of record."
+  }
+}

@@ -1,0 +1,16 @@
+/* The prototype's design system (v0.18), unchanged and in its load order: tokens, Cairo, base, components, motion,
+   then the screen families. deeplook.css is the prototype's last-word fixes, so it stays after the families it corrects.
+   Source: prototype/src/styles. Change the look here, never per app. */
+@import './fonts.css';
+@import './tokens.css';
+@import './base.css';
+@import './styles/components.css';
+@import './styles/motion.css';
+@import './styles/leave.css';
+@import './styles/need.css';
+@import './styles/doc.css';
+@import './styles/home.css';
+@import './styles/designer.css';
+@import './styles/deeplook.css';
+@import './styles/admin.css';
+@import './auth.css';

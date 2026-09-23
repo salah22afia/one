@@ -1,0 +1,16 @@
+.placeholder { display: grid; gap: 8px; }
+.placeholder .mono { color: var(--fg-3); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+.card { background: var(--bg-elev); border: 1px solid var(--hair); border-radius: 14px; padding: 16px; display: grid; gap: 6px; }
+.card ul { margin: 0; padding-inline-start: 18px; }
+.muted { color: var(--fg-3); }
+.dyn-form fieldset { border: 1px solid var(--hair); border-radius: 14px; padding: 16px; display: grid; gap: 12px; }
+.dyn-field { display: grid; gap: 4px; }
+.dyn-field input, .dyn-field select, .dyn-field textarea { padding: 8px 10px; border: 1px solid var(--rail); border-radius: 10px; background: var(--bg-elev); }
+.dyn-field small[data-level='block'] { color: var(--danger); }
+.adm-me { display: flex; align-items: center; gap: 10px; padding: 10px 14px 6px; border-top: 1px solid var(--hair-2); margin-top: 8px; }
+.adm-me > span { display: grid; min-width: 0; }
+.adm-me b { font-size: var(--t-sub); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-me .num { font-size: var(--t-cap); color: var(--fg-3); }
+.lb-side button.side-item { width: 100%; text-align: start; }
+.lb-shell .lb-side { overflow-y: auto; scrollbar-width: none; }

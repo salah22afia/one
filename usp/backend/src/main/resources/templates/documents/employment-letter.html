@@ -1,0 +1,136 @@
+<!doctype html>
+<!--/* Employment letter (DC-01). Official sheet layout ported from the prototype (ui/Documents.tsx DocSheet, styles/doc.css).
+       Rendered only from the immutable payload snapshot; the same HTML is printed by the browser and converted to PDF. */-->
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" th:attr="dir=${dir}">
+<head>
+<meta charset="utf-8">
+<title th:text="${doc.number()}">LTR-2026-0001</title>
+<style th:utext="${fontCss}"></style>
+<style>
+  @page { size: A4 portrait; margin: 14mm 16mm; }
+  :root { --sg: #0b4a2f; --sgold: #b5944d; --scream: #f6f2e8; --shair: #d8d5cc; --sink: #16201b; --smute: #5f6864; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #ecebe6; }
+  body { font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: var(--sink); font-size: 12.5px; line-height: 1.8; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sheet { background: #fff; width: 210mm; min-height: 297mm; margin: 24px auto; padding: 14mm 16mm; box-shadow: 0 8px 30px rgba(0,0,0,.12); display: flex; flex-direction: column; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; direction: ltr; unicode-bidi: isolate; }
+  .head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 3px solid var(--sg); margin-bottom: 12px; }
+  .org { display: flex; flex-direction: column; line-height: 1.45; }
+  .org b { color: var(--sg); font-size: 15px; font-weight: 800; }
+  .org span { color: var(--sg); font-size: 11.5px; font-weight: 700; }
+  .org small { color: var(--smute); font-size: 9.5px; }
+  .org.ar { text-align: right; } .org.en { text-align: left; }
+  .org.en b { font-size: 13px; } .org.en span { font-size: 10.5px; } .org.en small { font-size: 9px; }
+  .emblem { width: 22mm; height: 22mm; object-fit: contain; }
+  .meta { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--scream); border: 1px solid var(--shair); border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; }
+  .cell { display: flex; flex-direction: column; padding: 0 8px; border-inline-start: 1px solid var(--shair); min-width: 0; }
+  .cell:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .cell i { font-style: normal; color: var(--smute); font-size: 10px; }
+  .cell b { font-size: 12.5px; line-height: 1.5; overflow-wrap: anywhere; }
+  .cell b.strong { color: var(--sg); font-weight: 800; }
+  .cell small { color: var(--smute); font-size: 10px; }
+  .title { text-align: center; margin: 4px 0 14px; }
+  .badge { display: inline-block; border: 1px solid var(--sgold); color: var(--sgold); border-radius: 999px; padding: 0 12px; font-size: 10.5px; font-weight: 700; line-height: 20px; }
+  .title h1 { margin: 6px 0 4px; color: var(--sg); font-size: 18px; font-weight: 800; line-height: 1.5; }
+  .diamond { display: block; position: relative; height: 12px; }
+  .diamond::before, .diamond::after { content: ""; position: absolute; top: 6px; width: 60px; height: 1px; background: var(--sgold); }
+  .diamond::before { right: calc(50% + 10px); } .diamond::after { left: calc(50% + 10px); }
+  .diamond i { position: absolute; left: 50%; top: 2px; width: 8px; height: 8px; background: var(--sgold); transform: translateX(-50%) rotate(45deg); }
+  .body { flex: 1; }
+  .letter { margin-bottom: 14px; }
+  .letter .to { font-weight: 800; margin: 0 0 8px; }
+  .letter p { margin: 0 0 8px; text-align: justify; font-size: 13.5px; line-height: 2; }
+  .letter.en { direction: ltr; text-align: left; border-top: 1px dashed var(--shair); padding-top: 12px; }
+  .letter .closing { font-weight: 800; color: var(--sg); }
+  .signs { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .sig { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 190px; gap: 2px; }
+  .sig i { font-style: normal; color: var(--smute); font-size: 10.5px; }
+  .sig b { color: var(--sg); font-size: 14px; font-weight: 800; }
+  .sig small { color: var(--smute); font-size: 10.5px; }
+  .seal { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px; width: 112px; height: 112px; margin-top: 8px; border-radius: 50%; border: 2px solid var(--sgold); box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 4px var(--sgold); color: var(--sgold); font-size: 9.5px; line-height: 1.25; font-weight: 700; transform: rotate(-6deg); }
+  .seal img { width: 26px; height: 26px; margin-bottom: 2px; }
+  .seal span { color: var(--sg); font-size: 10.5px; font-weight: 800; }
+  .seal em { font-style: normal; font-size: 7px; line-height: 1.2; }
+  .seal small { font-size: 9px; }
+  .foot { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--shair); display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; font-size: 9.5px; color: var(--smute); }
+  .foot b { color: var(--sg); font-size: 10.5px; }
+  .foot .c { text-align: center; line-height: 1.5; }
+  .qr { width: 22mm; height: 22mm; display: block; }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  .code { margin-top: 6px; text-align: center; font-size: 9px; color: var(--smute); }
+  .code b { color: var(--sgold); }
+  @media print { html, body { background: #fff; } .sheet { margin: 0; padding: 0; width: auto; min-height: calc(297mm - 28mm); box-shadow: none; } }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="head">
+    <div class="org ar" dir="rtl"><b>الأمانة العامة</b><span>لمجلس التعاون لدول الخليج العربية</span><small>الإدارة العامة للموارد البشرية</small></div>
+    <img class="emblem" th:src="${emblem}" alt="">
+    <div class="org en" dir="ltr"><b>General Secretariat</b><span>Cooperation Council for the Arab States of the Gulf</span><small>General Administration for Human Resources</small></div>
+  </header>
+
+  <section class="meta">
+    <div class="cell"><i th:text="${showAr} ? 'رقم الخطاب' : 'Letter no.'">رقم الخطاب</i><b class="strong mono" th:text="${doc.number()}">LTR-2026-0001</b></div>
+    <div class="cell"><i th:text="${showAr} ? 'التاريخ' : 'Date'">التاريخ</i><b class="mono" th:text="${issuedGreg}">21/09/2026</b><small th:if="${showAr}" th:text="${issuedHijri} + ' هـ'"></small></div>
+    <div class="cell"><i th:text="${showAr} ? 'الرقم الوظيفي' : 'Employee no.'">الرقم الوظيفي</i><b class="mono" th:text="${holder['empNo']}">2101</b></div>
+    <div class="cell"><i th:text="${showAr} ? 'التصنيف' : 'Classification'">التصنيف</i><b th:text="${showAr} ? 'عادي' : 'Unclassified'">عادي</b></div>
+  </section>
+
+  <section class="title">
+    <span class="badge" th:text="${showAr} ? 'خطاب' : 'Letter'">خطاب</span>
+    <h1><span th:if="${showAr}">خطاب تعريف</span><span th:if="${showAr and showEn}"> · </span><span th:if="${showEn}">Employment Letter</span></h1>
+    <span class="diamond" aria-hidden="true"><i></i></span>
+  </section>
+
+  <section class="body">
+    <article class="letter ar" th:if="${showAr}" dir="rtl">
+      <p class="to">إلى: <span th:text="${data['to']}">الجهة</span></p>
+      <p th:with="w=${female} ? 'تعمل' : 'يعمل', t=${female} ? 'السيدة' : 'السيد', s=${female} ? 'راتبها' : 'راتبه'">
+        تشهد الأمانة العامة لمجلس التعاون لدول الخليج العربية بأن <span th:text="${t}"></span> <b th:text="${holder['name']['ar']}">الاسم</b>،
+        الرقم الوظيفي <span class="mono" th:text="${holder['empNo']}"></span>، <span th:text="${w}"></span> لديها بوظيفة
+        <b th:text="${holder['title']['ar']}">المسمى</b> في <span th:text="${holder['unit']['ar']}">الوحدة</span>
+        <th:block th:if="${hiredAr != ''}">منذ <span th:text="${hiredAr}"></span></th:block><th:block th:if="${salary != null}">،
+        ويبلغ إجمالي <span th:text="${s}"></span> الشهري <b class="mono" th:text="${salary}"></b> ريال سعودي</th:block>.
+      </p>
+      <p th:text="${female} ? 'وقد أُعطي هذا الخطاب بناءً على طلبها دون أدنى مسؤولية على الأمانة العامة.' : 'وقد أُعطي هذا الخطاب بناءً على طلبه دون أدنى مسؤولية على الأمانة العامة.'"></p>
+      <p class="closing">وتفضلوا بقبول فائق الاحترام والتقدير،</p>
+    </article>
+
+    <article class="letter en" th:if="${showEn}" dir="ltr">
+      <p class="to">To: <span th:text="${data['to']}">Addressee</span></p>
+      <p>
+        The General Secretariat of the Cooperation Council for the Arab States of the Gulf certifies that
+        <span th:text="${female} ? 'Ms.' : 'Mr.'"></span> <b th:text="${holder['name']['en']}">Name</b>, employee no. <span class="mono" th:text="${holder['empNo']}"></span>,
+        has been employed as <b th:text="${holder['title']['en']}">Title</b> in the <span th:text="${holder['unit']['en']}">Unit</span>
+        <th:block th:if="${hiredEn != ''}">since <span th:text="${hiredEn}"></span></th:block><th:block th:if="${salary != null}">,
+        with a total monthly salary of SAR <b class="mono" th:text="${salary}"></b></th:block>.
+      </p>
+      <p th:text="'This letter has been issued at ' + (${female} ? 'her' : 'his') + ' request without any liability on the part of the General Secretariat.'"></p>
+      <p class="closing">Yours faithfully,</p>
+    </article>
+
+    <div class="signs" th:if="${signer != null}">
+      <div class="sig">
+        <i th:text="${showAr} ? 'أصدره' : 'Issued by'">أصدره</i>
+        <b th:text="${showAr} ? ${signer['name']['ar']} : ${signer['name']['en']}">الاسم</b>
+        <small th:text="${showAr} ? ${signer['title']['ar']} : ${signer['title']['en']}">المسمى</small>
+        <span class="seal"><img th:src="${emblem}" alt=""><span th:text="${showAr} ? 'موقّع إلكترونياً' : 'Signed electronically'">موقّع إلكترونياً</span><small class="mono" th:text="${issuedGreg}"></small><em th:text="${showAr} ? 'بوابة الخدمات الموحدة' : 'Unified Services Portal'"></em></span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span><b class="mono" th:text="${doc.number()}">LTR-2026-0001</b></span>
+    <span class="c">
+      <span th:if="${showAr}">صدر إلكترونياً عبر «بوابة الخدمات الموحدة» — الوثيقة صحيحة دون توقيع خطي، ويُتحقق منها برمز التحقق<br></span>
+      <span th:if="${showEn}">Issued electronically through the Unified Services Portal — valid without a handwritten signature; verify it with the verification code<br></span>
+      <b class="mono" th:text="${doc.verifyCode()}">GS-0000-0000-0000</b>
+      <br><span class="mono" th:text="${verifyUrl}"></span>
+    </span>
+    <span class="qr" th:utext="${qr}"></span>
+  </footer>
+  <div class="code"><span th:text="${showAr} ? 'نموذج' : 'Form'">نموذج</span> <b class="mono" th:text="${p['code']}">USP-DC-01</b> · <span th:text="${showAr} ? 'إصدار' : 'version'">إصدار</span> <span th:text="${p['version']}">1.0</span></div>
+</main>
+</body>
+</html>

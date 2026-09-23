@@ -1,0 +1,91 @@
+/* بوابة الخدمات الموحدة — الرموز التصميمية v0.2 «الهوية»
+   الأرضية كريمية بلون هوية الأمانة العامة، والأخضر العميق حضور مؤسسي في اللحظات المهمة (الرأس، والبطاقة، والأزرار)،
+   والذهبي خطوط رفيعة وزخرفة مقتصدة، والأسطح بيضاء بعمق طبقي هادئ. */
+:root {
+  --cream: #fbf9f3;
+  --bg: #fbf9f3;
+  --bg-elev: #ffffff;
+  --bg-inset: #f3efe4;
+  --bg-inset-2: #e9e3d3;
+  --fg: #16201b;
+  --fg-2: #5b6660;
+  --fg-3: #8a948e;
+  --fg-4: #b1b9b4;
+  --hair: rgba(22, 32, 27, 0.10);
+  --hair-2: rgba(22, 32, 27, 0.06);
+  --rail: #d8d1bd;
+  --green: #0b4a2f;
+  --green-2: #0f5c3b;
+  --green-deep: #06331f;
+  --tint: #0b4a2f;
+  --tint-fg: #ffffff;
+  --tint-soft: rgba(11, 74, 47, 0.09);
+  --tint-soft-2: rgba(11, 74, 47, 0.16);
+  --gold: #b5944d;
+  --gold-2: #d4b978;
+  --gold-soft: rgba(181, 148, 77, 0.16);
+  --gold-line: rgba(181, 148, 77, 0.45);
+  --ok: #2e7d4f; --ok-soft: rgba(46, 125, 79, 0.12);
+  --warn: #9a6a12; --warn-soft: rgba(154, 106, 18, 0.14);
+  --danger: #b3352c; --danger-soft: rgba(179, 53, 44, 0.12);
+  --info: #25598f; --info-soft: rgba(37, 89, 143, 0.12);
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-shadow: 0 10px 40px rgba(11, 74, 47, 0.14), 0 2px 8px rgba(11, 74, 47, 0.06);
+  --scrim: rgba(6, 20, 12, 0.42);
+  --shadow-1: 0 1px 2px rgba(22, 32, 27, 0.04), 0 8px 24px rgba(22, 32, 27, 0.06);
+  --shadow-2: 0 2px 6px rgba(22, 32, 27, 0.06), 0 18px 48px rgba(22, 32, 27, 0.12);
+  --shadow-sheet: 0 -8px 40px rgba(6, 20, 12, 0.18), 0 -1px 0 rgba(255, 255, 255, 0.6);
+  --hero-grad: linear-gradient(160deg, #11613e 0%, #0b4a2f 52%, #06331f 100%);
+  --focus: #2f7a5b;
+  --r-ctl: 14px; --r-card: 22px; --r-sheet: 28px; --r-pill: 999px;
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-press: 90ms; --dur-fast: 180ms; --dur-sheet: 420ms;
+  --font-ar: "Cairo", system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+  --font-en: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font: var(--font-ar);
+  --lh-body: 1.65; --lh-tight: 1.25;
+  --t-display: 2.75rem; --t-large: 2.1rem; --t-title1: 1.6rem; --t-title2: 1.3rem; --t-headline: 1.0625rem; --t-body: 1.0625rem; --t-callout: 1rem; --t-sub: 0.9rem; --t-foot: 0.8125rem; --t-cap: 0.75rem;
+  --gutter: 20px; --tabbar-h: 64px; --tabbar-gap: 12px; --sidebar-w: 272px;
+  color-scheme: light;
+}
+html[lang="en"] { --font: var(--font-en); --lh-body: 1.5; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream: #f3ecd9; --bg: #0f1411; --bg-elev: #181e1a; --bg-inset: #212925; --bg-inset-2: #2b3530;
+    --fg: #eef1ec; --fg-2: #aab3ad; --fg-3: #7f8983; --fg-4: #5c6660;
+    --hair: rgba(238, 241, 236, 0.10); --hair-2: rgba(238, 241, 236, 0.06); --rail: #2f3a34;
+    --tint: #7cc5a2; --tint-fg: #0b1d14; --tint-soft: rgba(124, 197, 162, 0.13); --tint-soft-2: rgba(124, 197, 162, 0.22);
+    --gold: #d4b978; --gold-2: #e6cf95; --gold-soft: rgba(212, 185, 120, 0.16); --gold-line: rgba(212, 185, 120, 0.45);
+    --ok: #6fcf97; --ok-soft: rgba(111, 207, 151, 0.16); --warn: #e0b25b; --warn-soft: rgba(224, 178, 91, 0.16);
+    --danger: #f08a80; --danger-soft: rgba(240, 138, 128, 0.16); --info: #7fb0e6; --info-soft: rgba(127, 176, 230, 0.16);
+    --glass: rgba(20, 26, 22, 0.72); --glass-edge: rgba(255, 255, 255, 0.08); --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --scrim: rgba(0, 0, 0, 0.6);
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.30);
+    --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.4), 0 18px 48px rgba(0, 0, 0, 0.5);
+    --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.6), 0 -1px 0 rgba(255, 255, 255, 0.06);
+    --hero-grad: linear-gradient(160deg, #0f5636 0%, #0a3f28 52%, #05281a 100%);
+    --focus: #9adbbd;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cream: #f3ecd9; --bg: #0f1411; --bg-elev: #181e1a; --bg-inset: #212925; --bg-inset-2: #2b3530;
+  --fg: #eef1ec; --fg-2: #aab3ad; --fg-3: #7f8983; --fg-4: #5c6660;
+  --hair: rgba(238, 241, 236, 0.10); --hair-2: rgba(238, 241, 236, 0.06); --rail: #2f3a34;
+  --tint: #7cc5a2; --tint-fg: #0b1d14; --tint-soft: rgba(124, 197, 162, 0.13); --tint-soft-2: rgba(124, 197, 162, 0.22);
+  --gold: #d4b978; --gold-2: #e6cf95; --gold-soft: rgba(212, 185, 120, 0.16); --gold-line: rgba(212, 185, 120, 0.45);
+  --ok: #6fcf97; --ok-soft: rgba(111, 207, 151, 0.16); --warn: #e0b25b; --warn-soft: rgba(224, 178, 91, 0.16);
+  --danger: #f08a80; --danger-soft: rgba(240, 138, 128, 0.16); --info: #7fb0e6; --info-soft: rgba(127, 176, 230, 0.16);
+  --glass: rgba(20, 26, 22, 0.72); --glass-edge: rgba(255, 255, 255, 0.08); --glass-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.30);
+  --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.4), 0 18px 48px rgba(0, 0, 0, 0.5);
+  --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.6), 0 -1px 0 rgba(255, 255, 255, 0.06);
+  --hero-grad: linear-gradient(160deg, #0f5636 0%, #0a3f28 52%, #05281a 100%);
+  --focus: #9adbbd;
+  color-scheme: dark;
+}

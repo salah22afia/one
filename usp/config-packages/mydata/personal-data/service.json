@@ -1,0 +1,132 @@
+{
+  "id": "MD-01",
+  "module": "mydata",
+  "feature": "personal-data",
+  "version": 1,
+  "name": {
+    "ar": "تحديث بياناتي الشخصية",
+    "en": "Update my personal data"
+  },
+  "fields": [
+    {
+      "key": "field",
+      "type": "select",
+      "label": {
+        "ar": "البيان المراد تحديثه",
+        "en": "Data to update"
+      },
+      "required": true,
+      "options": [
+        {
+          "value": "mobile",
+          "label": {
+            "ar": "رقم الجوال",
+            "en": "Mobile number"
+          }
+        },
+        {
+          "value": "email",
+          "label": {
+            "ar": "البريد الإلكتروني",
+            "en": "Email"
+          }
+        },
+        {
+          "value": "address",
+          "label": {
+            "ar": "العنوان",
+            "en": "Address"
+          }
+        },
+        {
+          "value": "marital",
+          "label": {
+            "ar": "الحالة الاجتماعية",
+            "en": "Marital status"
+          }
+        },
+        {
+          "value": "card",
+          "label": {
+            "ar": "رقم البطاقة",
+            "en": "Card number"
+          }
+        }
+      ]
+    },
+    {
+      "key": "value",
+      "type": "text",
+      "label": {
+        "ar": "القيمة الجديدة",
+        "en": "New value"
+      },
+      "required": true
+    },
+    {
+      "key": "proof",
+      "type": "attachment",
+      "label": {
+        "ar": "إثبات",
+        "en": "Proof"
+      },
+      "requiredWhen": {
+        "in": [
+          {
+            "var": "field"
+          },
+          [
+            "marital",
+            "card"
+          ]
+        ]
+      }
+    }
+  ],
+  "form": {
+    "pages": [
+      {
+        "title": {
+          "ar": "التفاصيل",
+          "en": "Details"
+        },
+        "fields": [
+          "field",
+          "value",
+          "proof"
+        ]
+      }
+    ]
+  },
+  "rules": [],
+  "workflow": {
+    "steps": [
+      {
+        "key": "review",
+        "title": {
+          "ar": "مراجعة شؤون الموظفين",
+          "en": "Personnel affairs review"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-211"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "post",
+        "title": {
+          "ar": "تحديث البيانات في النظام المرجعي",
+          "en": "Data updated in the system of record"
+        },
+        "mode": "system",
+        "operation": "sap.pa.updateInfotype"
+      }
+    ]
+  },
+  "next": {
+    "ar": "تراجعه شؤون الموظفين ثم يُحدَّث في النظام المرجعي.",
+    "en": "Personnel affairs review it, then it is updated in the system of record."
+  }
+}

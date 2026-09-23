@@ -1,0 +1,16 @@
+import { chromium } from '/home/claude/.npm-global/lib/node_modules/playwright/index.mjs';
+import path from 'node:path';
+const file = 'file://' + path.resolve('dist/index.html');
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 400, height: 860 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+const p = await ctx.newPage(); p.on('pageerror', (e) => console.log('ERR', e.message));
+await p.goto(file + '#/inbox', { waitUntil: 'load' }); await p.waitForTimeout(800);
+await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('usp-portal-v1')); s.settings.persona = 'manager'; s.settings.lang = 'en'; localStorage.setItem('usp-portal-v1', JSON.stringify(s)); }); await p.reload({ waitUntil: 'load' }); await p.waitForTimeout(1500);
+console.log('dir', await p.evaluate(() => document.documentElement.dir));
+const row = p.locator('.swipe-front').first(); const box = await row.boundingBox(); console.log('box', box);
+const y = box.y + box.height / 2; const x0 = box.x + box.width - 30;
+await p.mouse.move(x0, y); await p.mouse.down(); await p.mouse.move(x0 - 20, y, { steps: 5 }); await p.mouse.move(x0 - 170, y, { steps: 20 });
+console.log('during', await row.evaluate((e) => e.style.transform));
+await p.mouse.up(); await p.waitForTimeout(800);
+console.log('after', await row.evaluate((e) => e.style.transform));
+await b.close();

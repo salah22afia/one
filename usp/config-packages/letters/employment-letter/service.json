@@ -1,0 +1,111 @@
+{
+  "id": "DC-01",
+  "module": "letters",
+  "feature": "employment-letter",
+  "version": 1,
+  "name": {
+    "ar": "خطاب تعريف",
+    "en": "Employment letter"
+  },
+  "fields": [
+    {
+      "key": "to",
+      "type": "text",
+      "label": {
+        "ar": "الجهة الموجه إليها",
+        "en": "Addressed to"
+      },
+      "required": true,
+      "help": {
+        "ar": "مثال: بنك الرياض، سفارة المملكة المتحدة",
+        "en": "e.g. Riyad Bank, the UK Embassy"
+      }
+    },
+    {
+      "key": "lang",
+      "type": "select",
+      "label": {
+        "ar": "اللغة",
+        "en": "Language"
+      },
+      "required": true,
+      "options": [
+        {
+          "value": "ar",
+          "label": {
+            "ar": "العربية",
+            "en": "Arabic"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "ar": "الإنجليزية",
+            "en": "English"
+          }
+        },
+        {
+          "value": "both",
+          "label": {
+            "ar": "الاثنتان",
+            "en": "Both"
+          }
+        }
+      ]
+    },
+    {
+      "key": "salary",
+      "type": "boolean",
+      "label": {
+        "ar": "يتضمن الراتب",
+        "en": "Includes salary"
+      }
+    }
+  ],
+  "form": {
+    "pages": [
+      {
+        "title": {
+          "ar": "الخطاب",
+          "en": "Letter"
+        },
+        "fields": [
+          "to",
+          "lang",
+          "salary"
+        ]
+      }
+    ]
+  },
+  "rules": [],
+  "workflow": {
+    "steps": [
+      {
+        "key": "review",
+        "title": {
+          "ar": "مراجعة شؤون الموظفين وإصدار الخطاب",
+          "en": "Personnel affairs review and issue the letter"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-211"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "register",
+        "title": {
+          "ar": "إصدار الخطاب برمز تحقق",
+          "en": "Letter issued with a verification code"
+        },
+        "mode": "system",
+        "operation": "documents.issue:employment-letter"
+      }
+    ]
+  },
+  "next": {
+    "ar": "تصدره شؤون الموظفين برمز تحقق، وتجده في طلبك جاهزاً للتحميل.",
+    "en": "Personnel affairs issue it with a verification code; you will find it in your request ready to download."
+  }
+}

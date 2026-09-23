@@ -1,0 +1,281 @@
+/* v0.9 «أحتاج شيئاً» (AS-01): بطاقة الاحتياج، والمراحل، ولوحات المهام بالأدوار، والمعالج، والمكاتب، والعهدة، ومركز سياسة الاحتياج
+   على الهوية نفسها: أسطح بيضاء بعمق هادئ، والأخضر في القرار، والذهبي لما يصير عهدة أو يُصدر مستنداً. */
+
+/* ——— بطاقة الاحتياج ——— */
+.need-card { background: var(--bg-elev); border-radius: 20px; box-shadow: var(--shadow-1); padding: 14px 16px 12px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.need-card::before { content: ""; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(var(--gold-2), var(--gold)); }
+.split-detail .need-card, .sheet .need-card { box-shadow: none; background: var(--bg-inset); }
+.nc-head { display: flex; align-items: center; gap: 12px; }
+.nc-head .qicon { width: 44px; height: 44px; border-radius: 14px; flex: none; }
+.nc-head .qicon svg { width: 22px; height: 22px; }
+.nc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.nc-main > b { font-size: var(--t-headline); font-weight: 800; }
+.nc-main .cell-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.nc-lines { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.nc-lines li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; background: var(--bg-inset); border-radius: 12px; font-size: var(--t-callout); }
+.split-detail .nc-lines li, .sheet .nc-lines li { background: var(--bg-elev); }
+.nc-line-name { font-weight: 700; min-width: 0; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.nc-line-name .cell-sub { display: inline; margin: 0; }
+.nc-why { margin: 10px 2px 0; font-size: var(--t-sub); color: var(--fg-2); line-height: 1.55; }
+.nc-meta { padding: 10px 0 0; gap: 6px; }
+
+/* ——— المراحل كما يراها الطالب ——— */
+.need-stages { display: flex; flex-direction: column; padding: 4px 0 0; }
+.ns { display: grid; grid-template-columns: 30px 1fr; gap: 12px; position: relative; padding-bottom: 14px; }
+.ns:last-of-type { padding-bottom: 4px; }
+.ns::before { content: ""; position: absolute; top: 30px; bottom: -2px; inset-inline-start: 13.5px; width: 3px; border-radius: 2px; background: var(--rail); }
+.ns:last-of-type::before { display: none; }
+.ns-dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-inset); color: var(--fg-3); z-index: 1; }
+.ns-dot svg { width: 15px; height: 15px; stroke-width: 2.2; }
+.ns.done .ns-dot { background: var(--ok-soft); color: var(--ok); }
+.ns.current .ns-dot { background: var(--tint); color: var(--tint-fg); box-shadow: 0 0 0 5px var(--tint-soft); }
+.ns.skipped .ns-dot { background: var(--bg-inset-2); color: var(--fg-4); }
+.ns-main { display: flex; flex-direction: column; min-width: 0; }
+.ns-title { font-weight: 700; font-size: var(--t-callout); line-height: 1.4; }
+.ns.current .ns-title { color: var(--tint); }
+.ns.skipped .ns-title { color: var(--fg-3); text-decoration: line-through; text-decoration-color: var(--fg-4); }
+.ns.pending .ns-title { color: var(--fg-2); }
+.ns-sub { color: var(--fg-2); font-size: var(--t-foot); }
+.ns-expected { display: flex; align-items: center; gap: 6px; margin: 2px 0 0; padding: 8px 12px; border-radius: 12px; background: var(--gold-soft); color: var(--fg); font-size: var(--t-foot); font-weight: 600; }
+.ns-expected svg { width: 15px; height: 15px; color: var(--gold); stroke-width: 2; }
+
+/* ——— لوحات المهام بالأدوار ——— */
+.np-head { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 6px; }
+.np-head > b { font-size: var(--t-headline); font-weight: 800; }
+.np-line { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--hair-2); }
+.np-line-main { display: flex; flex-direction: column; }
+.np-line-main > b { font-size: var(--t-callout); font-weight: 700; }
+.np-choice { display: flex; gap: 8px; flex-wrap: wrap; }
+.np-choice .pill { padding: 8px 14px; font-size: var(--t-sub); transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-press); }
+.np-choice .pill:active { transform: scale(0.96); }
+.np-choice .pill[disabled] { opacity: 0.45; pointer-events: none; }
+.np-two { display: grid; grid-template-columns: 1fr 1fr; }
+.np-two .field { border-top: 1px solid var(--hair-2); }
+.np-two .field:first-child { border-top: 1px solid var(--hair-2); }
+@media (max-width: 560px) { .np-two { grid-template-columns: 1fr; } }
+.val-done { color: var(--ok); font-weight: 700; }
+
+/* ——— المعالج ——— */
+.need-cats { display: grid; grid-template-columns: 1fr; gap: 0; background: var(--bg-elev); border-radius: var(--r-card); box-shadow: var(--shadow-1); overflow: hidden; }
+.need-cats .type-row { border-top: 1px solid var(--hair-2); }
+.need-cats > :first-child .type-row { border-top: 0; }
+.need-free { display: grid; grid-template-columns: 1fr 76px auto; gap: 8px; align-items: center; padding: 12px 14px; }
+.need-free input { background: var(--bg-inset); border: 0; border-radius: 12px; padding: 11px 12px; font-size: var(--t-callout); outline: none; box-shadow: inset 0 0 0 1px transparent; transition: box-shadow var(--dur-fast); min-width: 0; width: 100%; color: var(--fg); }
+.need-free input:focus { box-shadow: inset 0 0 0 2px var(--focus); }
+.need-free input.qty { text-align: center; direction: ltr; }
+.need-free .btn { padding: 10px 14px; }
+@media (max-width: 560px) { .need-free { grid-template-columns: 1fr 64px; } .need-free .btn { grid-column: 1 / -1; } }
+.need-line { gap: 10px; }
+.need-line .cell-main { min-width: 0; }
+.need-qty { display: inline-flex; align-items: center; gap: 2px; background: var(--bg-inset); border-radius: 12px; padding: 2px; flex: none; }
+.need-qty > b { min-width: 30px; text-align: center; font-size: var(--t-callout); }
+.icon-btn.sm { width: 32px; height: 32px; border-radius: 10px; font-size: 1.1rem; font-weight: 800; line-height: 1; }
+.icon-btn.sm svg { width: 18px; height: 18px; }
+.icon-btn.danger { color: var(--danger); }
+.icon-btn.danger:active { background: var(--danger-soft); }
+.need-gate .ic { background: var(--gold-soft); color: var(--gold); }
+.need-new .steps > span:last-child { color: var(--fg-2); }
+
+/* ——— المكاتب (المشتريات، المستودع) ——— */
+.desk-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 6px; }
+@media (max-width: 420px) { .desk-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } .desk-tiles .tile { padding: 12px 10px 10px; } }
+.desk-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; border-top: 1px solid var(--hair-2); text-align: start; color: var(--fg); transition: background var(--dur-fast); }
+.desk-row:first-child { border-top: 0; }
+.desk-row:active { background: var(--bg-inset); }
+.desk-row .qicon { width: 40px; height: 40px; border-radius: 13px; flex: none; }
+.desk-row .qicon svg { width: 20px; height: 20px; }
+.desk-row .dr-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.desk-row .dr-main > b { font-size: var(--t-callout); font-weight: 800; line-height: 1.35; }
+.desk-row .dr-main .cell-sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.desk-row .dr-trail { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.desk-row.selected { background: var(--tint-soft); }
+.stock-row .cell-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stock-n { font-size: var(--t-title2); font-weight: 800; min-width: 44px; text-align: center; }
+.stock-n.zero { color: var(--danger); }
+.stock-n.low { color: var(--warn); }
+
+/* ——— عهدتي ——— */
+.custody-card { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; border-top: 1px solid var(--hair-2); text-align: start; color: var(--fg); }
+.custody-card:first-child { border-top: 0; }
+.custody-card .qicon { width: 42px; height: 42px; border-radius: 14px; flex: none; }
+.custody-card .qicon svg { width: 21px; height: 21px; }
+.custody-card .cc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.custody-card .cc-main > b { font-size: var(--t-callout); font-weight: 800; }
+.custody-card .cc-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 4px; }
+.custody-card .cc-foot .cell-sub { margin: 0; }
+.custody-sum { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 4px 0 6px; }
+
+/* ——— مركز سياسة الاحتياج ——— */
+.npc-list .cell.stacked { gap: 10px; }
+.npc-title { display: flex; align-items: center; gap: 12px; }
+.npc-title .qicon { width: 40px; height: 40px; border-radius: 13px; flex: none; }
+.npc-title .qicon svg { width: 20px; height: 20px; }
+.npc-title .cell-main { flex: 1; min-width: 0; }
+.npc-title .cell-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.npc-ended { opacity: 0.62; }
+.npc-ended .qicon { filter: saturate(0.2); }
+.npc-add { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 16px; background: var(--tint-soft); color: var(--tint); font-weight: 800; border-radius: var(--r-card); margin-bottom: 12px; text-align: start; }
+.npc-add .cell-lead { background: var(--bg-elev); color: var(--tint); }
+.npc-route { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; }
+.npc-route > b { font-size: var(--t-callout); font-weight: 800; }
+.npc-steps { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.npc-steps .pill { font-weight: 700; }
+.npc-steps .pill.branch-stock { background: var(--ok-soft); color: var(--ok); }
+.npc-steps .pill.branch-purchase { background: var(--gold-soft); color: var(--gold); }
+.npc-steps .pill.branch-tender { background: var(--warn-soft); color: var(--warn); }
+.npc-steps .arrow { color: var(--fg-4); font-size: var(--t-cap); }
+.npc-rules { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; padding: 12px 16px; }
+@media (max-width: 560px) { .npc-rules { grid-template-columns: 1fr; } }
+.npc-rules label { display: flex; flex-direction: column; gap: 4px; font-size: var(--t-cap); font-weight: 700; color: var(--fg-3); }
+.npc-rules label > .cell-sub { font-size: var(--t-sub); color: var(--fg); margin: 0; }
+.npc-rules input:not(.switch), .npc-rules select { background-color: var(--bg-inset); border: 0; border-radius: 12px; padding: 10px 12px; font-size: var(--t-callout); outline: none; box-shadow: inset 0 0 0 1px transparent; transition: box-shadow var(--dur-fast); width: 100%; color: var(--fg); }
+.npc-rules input:focus, .npc-rules select:focus { box-shadow: inset 0 0 0 2px var(--focus); }
+.npc-rules input[disabled], .npc-rules select[disabled] { opacity: 0.7; }
+.npc-rules .sw { flex-direction: row; align-items: center; justify-content: space-between; font-size: var(--t-sub); color: var(--fg); }
+.npc-sla { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 12px; }
+@media (max-width: 560px) { .npc-sla { grid-template-columns: repeat(2, 1fr); } }
+.npc-coord { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--hair-2); }
+.npc-coord:first-child { border-top: 0; }
+.npc-coord > b { font-size: var(--t-callout); font-weight: 800; }
+.npc-coord .chips .pill { padding: 6px 12px; font-size: var(--t-sub); }
+.npc-coord .chips .pill[aria-pressed="true"] { background: var(--tint); color: var(--tint-fg); }
+.chips .pill { transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-press); }
+.chips .pill:active { transform: scale(0.96); }
+
+/* ——— المسار المتوقع بمقاطعه ——— */
+.rp-branch { display: flex; align-items: center; gap: 8px; padding: 10px 0 4px; }
+.rp-branch::after { content: ""; flex: 1; height: 1px; background: var(--hair); }
+.rp-branch + .rp-item::before { display: none; }
+.rp-cond { font-weight: 600; color: var(--warn); font-size: var(--t-foot); }
+
+/* ——— v0.10 (AS-01 2.0): كتالوج الاحتياجات، وتحديد الصنف، وتجهيز الشراء، والعروض، وملخص الشراء، ومقاطع الرحلة ——— */
+.need-catalog { display: grid; grid-template-columns: 1fr; gap: 0; background: var(--bg-elev); border-radius: var(--r-card); box-shadow: var(--shadow-1); overflow: hidden; }
+.need-k { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-top: 1px solid var(--hair-2); background: transparent; color: var(--fg); text-align: start; font: inherit; cursor: pointer; transition: background var(--dur-fast); }
+.need-catalog > :first-child .need-k { border-top: 0; }
+.need-k:active, .need-k.on { background: var(--tint-soft); }
+.need-k .qicon { width: 40px; height: 40px; border-radius: 13px; flex: none; }
+.need-k-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.need-k-main > b { font-size: var(--t-callout); font-weight: 700; }
+.need-k-trail { display: flex; align-items: center; gap: 10px; flex: none; }
+.need-k-price { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+.need-k-price > b { font-size: var(--t-callout); }
+.need-k-add { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-inset); color: var(--tint); }
+.need-k-add svg { width: 16px; height: 16px; stroke-width: 2.4; }
+.need-k .tr-check { flex: none; }
+.nc-asked { display: block; font-size: var(--t-foot); color: var(--fg-3); }
+.np-spec { gap: 10px; }
+.np-spec .select-in { width: 100%; }
+.np-spec .np-two { margin: 0 -16px; }
+.np-total { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--hair-2); background: var(--gold-soft); font-weight: 700; }
+.np-total > b { font-size: var(--t-headline); }
+.link-btn { background: none; border: 0; padding: 0; color: var(--tint); font: inherit; font-weight: 700; cursor: pointer; }
+.np-offer-row { display: grid; grid-template-columns: 28px 1fr 110px 140px; gap: 8px; align-items: center; padding: 8px 14px; border-top: 1px solid var(--hair-2); }
+.np-offer-row input { background: var(--bg-inset); border: 0; border-radius: 12px; padding: 10px 12px; font-size: var(--t-callout); outline: none; min-width: 0; width: 100%; color: var(--fg); box-shadow: inset 0 0 0 1px transparent; transition: box-shadow var(--dur-fast); }
+.np-offer-row input:focus { box-shadow: inset 0 0 0 2px var(--focus); }
+.np-offer-n { color: var(--fg-3); font-weight: 700; text-align: center; }
+@media (max-width: 560px) { .np-offer-row { grid-template-columns: 28px 1fr; } .np-offer-row input:nth-child(3), .np-offer-row input:nth-child(4) { grid-column: 2; } }
+.np-pick { display: flex; flex-direction: column; gap: 6px; padding: 6px 14px 10px; }
+.np-pick-row { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 14px; background: var(--bg-inset); color: var(--fg); font: inherit; text-align: start; cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast); }
+.split-detail .np-pick-row, .sheet .np-pick-row { background: var(--bg-elev); }
+.np-pick-row.on { border-color: var(--gold-line); background: var(--tint-soft); }
+.np-pick-dot { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-elev); color: var(--tint); flex: none; box-shadow: inset 0 0 0 1.5px var(--hair); }
+.np-pick-row.on .np-pick-dot { background: var(--tint); color: var(--tint-fg); box-shadow: none; }
+.np-pick-dot svg { width: 14px; height: 14px; stroke-width: 2.6; }
+.np-pick-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.np-pick-main > b { font-size: var(--t-callout); }
+.np-pick-row > b.num { font-size: var(--t-callout); }
+.np-sum { padding: 12px 16px 10px; display: flex; flex-direction: column; gap: 8px; }
+.np-sum-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.np-sum-head > b { font-size: var(--t-headline); font-weight: 800; }
+.np-sum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 14px; }
+.np-sum-grid > span { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.np-sum-grid i { font-style: normal; font-size: var(--t-foot); color: var(--fg-3); }
+.np-sum-grid b { font-size: var(--t-callout); overflow-wrap: anywhere; }
+.np-offers { width: 100%; border-collapse: collapse; font-size: var(--t-sub); }
+.np-offers th { text-align: start; color: var(--fg-3); font-weight: 700; font-size: var(--t-foot); padding: 4px 6px; border-bottom: 1px solid var(--hair); }
+.np-offers td { padding: 7px 6px; border-bottom: 1px solid var(--hair-2); }
+.np-offers tr.win td { color: var(--ok); font-weight: 700; }
+.np-offers td svg { width: 13px; height: 13px; stroke-width: 2.6; vertical-align: -2px; }
+.ns-seg { display: flex; align-items: center; gap: 8px; padding: 6px 0 10px; }
+.ns-seg > span { font-size: var(--t-foot); font-weight: 800; letter-spacing: 0; color: var(--fg-3); text-transform: uppercase; background: var(--bg-inset); border-radius: 999px; padding: 3px 10px; }
+.ns-seg.done > span { color: var(--ok); background: var(--ok-soft); }
+.ns-seg.current > span { color: var(--tint); background: var(--tint-soft); }
+.ns + .ns-seg { padding-top: 2px; }
+.rp-item.cond .rp-txt > b { color: var(--fg-2); }
+.pt-card .pill .mono { font-size: 0.8em; }
+
+/* ——— v0.11: قرار الجهة الفنية بثلاثة أوضاع، والتوفير من رصيد الجهة، وصف العرض بالمورّد والعملة والمرفق، وملف الشراء، وسبب الترسية، ورصيد الجهات ——— */
+.np-mode { display: flex; flex-wrap: wrap; gap: 6px; }
+.np-mode .pill { padding: 8px 12px; }
+.np-provide { gap: 8px; }
+.np-provide .select-in { width: 100%; }
+.np-provide .field { margin: 0 -16px; }
+.np-offer-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--hair-2); }
+.np-offer-row .select-in, .np-offer-row input { background: var(--bg-inset); border: 0; border-radius: 12px; padding: 10px 12px; font-size: var(--t-callout); outline: none; min-width: 0; color: var(--fg); box-shadow: inset 0 0 0 1px transparent; transition: box-shadow var(--dur-fast); }
+.np-offer-row .select-in:focus, .np-offer-row input:focus { box-shadow: inset 0 0 0 2px var(--focus); }
+.np-offer-sup { flex: 1 1 calc(100% - 44px); width: auto; }
+.split-detail .np-offer-row .select-in, .split-detail .np-offer-row input, .sheet .np-offer-row .select-in, .sheet .np-offer-row input { background: var(--bg-elev); box-shadow: inset 0 0 0 1px var(--hair); }
+.split-detail .np-offer-row .select-in:focus, .split-detail .np-offer-row input:focus, .sheet .np-offer-row input:focus { box-shadow: inset 0 0 0 2px var(--focus); }
+.np-offer-new { flex: 1 1 180px; }
+.np-offer-cur { flex: 0 0 88px; width: 88px; }
+.np-offer-fx { flex: 0 1 120px; }
+.np-offer-amt { flex: 1 1 120px; }
+.np-offer-val { flex: 0 1 150px; }
+.np-offer-att { flex: 0 1 auto; max-width: 100%; }
+.np-offer-att .np-file-name, .np-file .np-file-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
+@media (max-width: 560px) { .np-offer-row { grid-template-columns: none; } .np-offer-sup, .np-offer-new, .np-offer-amt, .np-offer-val { flex-basis: calc(100% - 36px); } .np-offer-cur, .np-offer-fx { flex-basis: calc(50% - 24px); } .np-offer-att { flex-basis: calc(100% - 36px); justify-content: center; } .np-offer-n { align-self: flex-start; } }
+.np-file { display: flex; flex-direction: column; gap: 6px; padding: 8px 16px 10px; }
+.np-file-label { font-size: var(--t-sub); font-weight: 700; color: var(--fg-2); }
+.np-file .btn { align-self: flex-start; position: relative; }
+.np-file-list { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; border-top: 1px solid var(--hair-2); }
+.np-file-list > b { font-size: var(--t-sub); color: var(--fg-2); }
+.np-file-list ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.np-file-list li { display: flex; align-items: center; gap: 8px; font-size: var(--t-sub); }
+.np-file-list li svg, .np-offers .np-file-name svg { width: 14px; height: 14px; stroke-width: 2.2; color: var(--tint); flex: none; vertical-align: -2px; }
+.np-file-main { display: flex; flex-direction: column; min-width: 0; }
+.np-file-main .np-file-name { font-weight: 700; overflow-wrap: anywhere; }
+.np-award { font-size: var(--t-sub); color: var(--fg-2); display: flex; flex-direction: column; gap: 4px; }
+.np-award.ok { color: var(--ok); font-weight: 700; display: flex; flex-direction: row; align-items: center; gap: 6px; }
+.np-award.ok svg { width: 14px; height: 14px; stroke-width: 2.6; }
+.np-award > b { color: var(--fg); }
+.np-award ul { margin: 0; padding-inline-start: 18px; }
+.np-offers th:last-child, .np-offers td:last-child { max-width: 160px; overflow-wrap: anywhere; }
+.npc-balance { display: flex; flex-direction: column; gap: 8px; padding: 12px 0 4px; border-top: 1px solid var(--hair-2); }
+.npc-balance .np-two { margin: 0; align-items: end; }
+.npc-balance .btn { align-self: end; }
+.erp-row.off { opacity: .6; }
+
+/* ——— v0.12: أمر الشراء من النظام المرجعي، ولوحة الاستلام بكميات الدفعة، والمعاينة، والتوقيع، وإقفال المتبقي ——— */
+.np-erp { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 14px; padding: 4px 14px 10px; }
+.np-erp span { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.np-erp span i { font-style: normal; font-size: var(--t-cap); color: var(--fg-3); }
+.np-erp span b { font-size: var(--t-body); color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.np-rec .np-line-main b { font-size: var(--t-body); }
+.np-three { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; }
+.np-three .field, .np-three label.field { margin: 0; }
+.np-three input, .np-three select { width: 100%; }
+.np-rec .select-in { min-height: 40px; }
+.np-criteria { display: flex; flex-direction: column; gap: 6px; padding: 6px 0 4px; }
+.np-criteria > b { font-size: var(--t-sub); color: var(--fg-2); }
+.np-crit { display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 6px; align-items: center; }
+.np-crit input:not(.switch) { width: 100%; min-height: 38px; border-radius: 10px; }
+.np-crit label.sw { margin: 0; gap: 6px; padding: 0 4px; min-height: 38px; }
+.np-doc { padding: 6px 14px 4px; }
+.np-doc .doc-preview.docsheet { box-shadow: none; border: 1px solid var(--hair-2); }
+.np-actions { display: flex; gap: 10px; padding: 10px 14px 14px; justify-content: flex-end; flex-wrap: wrap; }
+.np-actions .btn.primary { flex: 1 1 200px; }
+.np-close { padding: 6px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+.np-close .btn.quiet { align-self: flex-start; color: var(--fg-3); }
+.np-close .np-actions { padding: 4px 0 0; }
+@media (max-width: 560px) { .np-three { grid-template-columns: 1fr 1fr; } .np-three label.field:last-child { grid-column: 1 / -1; } .np-crit { grid-template-columns: 1fr; } }
+
+/* ——— v0.13: سياسة الأخبار والقصص — لون القطاع وسجل التأكيدات ——— */
+.cp-hue { width: 30px; height: 30px; border-radius: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 3px 8px rgba(11,74,47,.16); }
+.cpr-head { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px 8px; }
+.cpr-bar { height: 6px; margin: 0 16px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.cpr-fill { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--tint), var(--gold)); transition: width 520ms var(--ease-out); }
+.cpr-meta { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px 0; }
+.cpr-list { display: flex; flex-direction: column; gap: 2px; padding: 10px 16px 14px; }
+.cpr-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: var(--t-sub); }
+.cpr-row b { font-weight: 700; }
+.cpr-row .num { color: var(--fg-2); font-size: var(--t-cap); }

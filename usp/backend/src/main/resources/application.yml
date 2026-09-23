@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: usp-backend
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${USP_DB_URL:jdbc:postgresql://localhost:5433/usp}
+    username: ${USP_DB_USER:usp}
+    password: ${USP_DB_PASSWORD:usp}
+  flyway:
+    # One folder per module under db/migration/<module>; versions are timestamps so modules never collide.
+    locations: classpath:db/migration
+    out-of-order: true
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+usp:
+  admin:
+    # Employee numbers that may manage every configuration before any manager position is set (first run, recovery).
+    # Managers are then SAP positions stored per configuration (config.config_set.owner_position_ids).
+    bootstrap-employees: ${USP_BOOTSTRAP_ADMINS:}
+    # First platform administrator (an account without SAP), created at start-up only while no enabled administrator
+    # exists. The password is temporary: it must be changed at first sign-in. Set both, or neither.
+    bootstrap-username: ${USP_BOOTSTRAP_ADMIN_USERNAME:}
+    bootstrap-password: ${USP_BOOTSTRAP_ADMIN_PASSWORD:}
+  sap:
+    # The SAP system every user-initiated call goes to, as that user (SU01).
+    base-url: ${USP_SAP_URL:http://sandbox.gcc-sg.org:8000}
+    # Optional sap-client query parameter (empty = the system default client).
+    client: ${USP_SAP_CLIENT:}
+    timeout: 10s
+    profile-path: /sap/tamkeen/profile/me
+  session:
+    # Portal sessions live in memory only. Idle and absolute limits.
+    idle-timeout: 30m
+    max-age: 8h
+    # Secure cookie (HTTPS only). The dev profile turns it off for http://localhost.
+    secure-cookie: true
+  config-packages:
+    # Source-controlled configured services (until the admin config store, §7.10).
+    dir: ${USP_CONFIG_PACKAGES:../config-packages}
+  documents:
+    # HMAC key for verification codes. MUST be set per environment; the default is for local development only.
+    verify-secret: ${USP_VERIFY_SECRET:dev-only-verify-secret-change-me}
+    # Where the public verification page lives (printed on documents and in the QR code).
+    public-base-url: ${USP_PUBLIC_URL:http://localhost:5173}
+    gotenberg-url: ${USP_GOTENBERG_URL:http://localhost:3000}

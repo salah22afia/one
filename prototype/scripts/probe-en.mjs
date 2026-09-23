@@ -1,0 +1,16 @@
+import { chromium } from '/home/claude/.npm-global/lib/node_modules/playwright/index.mjs';
+import path from 'node:path';
+const file = 'file://' + path.resolve('dist/index.html');
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+const p = await ctx.newPage();
+p.on('pageerror', (e) => console.log('ERR', e.message));
+await p.goto(file + '#/home', { waitUntil: 'load' }); await p.waitForTimeout(800);
+await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('usp-portal-v1')); s.settings.lang = 'en'; for (const x of s.people) if (x.persona === 'employee') x.persona = 'x'; s.people.find((x) => x.id === 'P-SARA').persona = 'employee'; localStorage.setItem('usp-portal-v1', JSON.stringify(s)); });
+await p.goto(file + '#/new/TM-01', { waitUntil: 'load' }); await p.reload({ waitUntil: 'load' }); await p.waitForTimeout(1200);
+await p.locator('.type-card').nth(2).click(); await p.waitForTimeout(1000);
+console.log(await p.locator('.type-card').nth(2).textContent());
+console.log(await p.locator('.checks').allTextContents());
+console.log(await p.locator('.btn.primary.block').getAttribute('disabled'));
+await p.screenshot({ path: 'dist/v4-probe-en.png' });
+await b.close();

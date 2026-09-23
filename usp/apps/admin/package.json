@@ -1,0 +1,30 @@
+{
+  "name": "@usp/admin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "vite build",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.103.1",
+    "@usp/api-client": "workspace:*",
+    "@usp/forms-core": "workspace:*",
+    "@usp/forms-web": "workspace:*",
+    "@usp/i18n": "workspace:*",
+    "@usp/module-needs": "workspace:*",
+    "@usp/module-timeleave": "workspace:*",
+    "@usp/ui-web": "workspace:*",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-router": "^8.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.0"
+  }
+}

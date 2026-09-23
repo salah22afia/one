@@ -1,0 +1,801 @@
+{
+ "_comment": "TEST FIXTURE ONLY: org structure and employees shaped like the prototype seed, served by the stub SAP in backend tests. Never loaded into a real database.",
+ "units": [
+  {
+   "id": "O-300",
+   "name_ar": "قطاع الشؤون الإدارية والمالية",
+   "name_en": "Administrative & Financial Affairs Sector",
+   "level": "sector",
+   "parent_unit_id": null,
+   "chief_position_id": "S-300"
+  },
+  {
+   "id": "O-100",
+   "name_ar": "الإدارة العامة للشؤون المالية والإدارية",
+   "name_en": "GA for Financial & Administrative Affairs",
+   "level": "ga",
+   "parent_unit_id": "O-300",
+   "chief_position_id": "S-100"
+  },
+  {
+   "id": "O-110",
+   "name_ar": "إدارة تمكين الأعمال",
+   "name_en": "Business Enablement Department",
+   "level": "department",
+   "parent_unit_id": "O-100",
+   "chief_position_id": "S-110"
+  },
+  {
+   "id": "O-111",
+   "name_ar": "قسم التمكين الرقمي وذكاء الأعمال",
+   "name_en": "Digital Enablement & BI Section",
+   "level": "section",
+   "parent_unit_id": "O-110",
+   "chief_position_id": "S-111"
+  },
+  {
+   "id": "O-112",
+   "name_ar": "قسم البيانات ولوحات المعلومات والتقارير",
+   "name_en": "Data, Dashboards & Reports Section",
+   "level": "section",
+   "parent_unit_id": "O-110",
+   "chief_position_id": "S-112"
+  },
+  {
+   "id": "O-120",
+   "name_ar": "إدارة الشؤون المالية",
+   "name_en": "Financial Affairs Department",
+   "level": "department",
+   "parent_unit_id": "O-100",
+   "chief_position_id": "S-120"
+  },
+  {
+   "id": "O-121",
+   "name_ar": "قسم الرواتب",
+   "name_en": "Payroll Section",
+   "level": "section",
+   "parent_unit_id": "O-120",
+   "chief_position_id": "S-121"
+  },
+  {
+   "id": "O-122",
+   "name_ar": "قسم الانتدابات والاستحقاقات",
+   "name_en": "Assignments & Entitlements Section",
+   "level": "section",
+   "parent_unit_id": "O-120",
+   "chief_position_id": "S-122"
+  },
+  {
+   "id": "O-130",
+   "name_ar": "إدارة المشتريات",
+   "name_en": "Procurement Department",
+   "level": "department",
+   "parent_unit_id": "O-100",
+   "chief_position_id": "S-130"
+  },
+  {
+   "id": "O-131",
+   "name_ar": "قسم المستودعات",
+   "name_en": "Stores Section",
+   "level": "section",
+   "parent_unit_id": "O-130",
+   "chief_position_id": "S-1302"
+  },
+  {
+   "id": "O-123",
+   "name_ar": "قسم الموازنة",
+   "name_en": "Budget Section",
+   "level": "section",
+   "parent_unit_id": "O-120",
+   "chief_position_id": "S-123"
+  },
+  {
+   "id": "O-140",
+   "name_ar": "إدارة تقنية المعلومات",
+   "name_en": "Information Technology Department",
+   "level": "department",
+   "parent_unit_id": "O-100",
+   "chief_position_id": "S-140"
+  },
+  {
+   "id": "O-141",
+   "name_ar": "قسم المستودع التقني",
+   "name_en": "Technical Store Section",
+   "level": "section",
+   "parent_unit_id": "O-140",
+   "chief_position_id": "S-1402"
+  },
+  {
+   "id": "O-150",
+   "name_ar": "إدارة الخدمات العامة",
+   "name_en": "General Services Department",
+   "level": "department",
+   "parent_unit_id": "O-100",
+   "chief_position_id": "S-150"
+  },
+  {
+   "id": "O-160",
+   "name_ar": "إدارة المراسم",
+   "name_en": "Protocol Department",
+   "level": "department",
+   "parent_unit_id": "O-300",
+   "chief_position_id": "S-160"
+  },
+  {
+   "id": "O-170",
+   "name_ar": "الإدارة الإعلامية",
+   "name_en": "Media Department",
+   "level": "department",
+   "parent_unit_id": "O-300",
+   "chief_position_id": "S-170"
+  },
+  {
+   "id": "O-190",
+   "name_ar": "مكتب أبوظبي",
+   "name_en": "Abu Dhabi Office",
+   "level": "department",
+   "parent_unit_id": "O-300",
+   "chief_position_id": "S-190"
+  },
+  {
+   "id": "O-200",
+   "name_ar": "الإدارة العامة للموارد البشرية",
+   "name_en": "GA for Human Resources",
+   "level": "ga",
+   "parent_unit_id": "O-300",
+   "chief_position_id": "S-200"
+  },
+  {
+   "id": "O-210",
+   "name_ar": "إدارة الموارد البشرية",
+   "name_en": "Human Resources Department",
+   "level": "department",
+   "parent_unit_id": "O-200",
+   "chief_position_id": "S-210"
+  },
+  {
+   "id": "O-211",
+   "name_ar": "قسم شؤون الموظفين",
+   "name_en": "Personnel Affairs Section",
+   "level": "section",
+   "parent_unit_id": "O-210",
+   "chief_position_id": "S-211"
+  }
+ ],
+ "positions": [
+  {
+   "id": "S-300",
+   "title_ar": "الأمين العام المساعد للشؤون الإدارية والمالية",
+   "title_en": "Assistant Secretary-General, Administrative & Financial Affairs",
+   "org_unit_id": "O-300",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1003",
+    "arabic_name": "سعود بن عبدالله المنصور",
+    "english_name": "Saud Al-Mansour"
+   }
+  },
+  {
+   "id": "S-100",
+   "title_ar": "المدير العام للشؤون المالية والإدارية",
+   "title_en": "Director General, Financial & Administrative Affairs",
+   "org_unit_id": "O-100",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1101",
+    "arabic_name": "عبدالله بن محمد العتيبي",
+    "english_name": "Abdullah Al-Otaibi"
+   }
+  },
+  {
+   "id": "S-110",
+   "title_ar": "مدير إدارة تمكين الأعمال",
+   "title_en": "Director, Business Enablement",
+   "org_unit_id": "O-110",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1502",
+    "arabic_name": "عبدالرحمن بن فهد الشمري",
+    "english_name": "Abdulrahman Al-Shammari"
+   }
+  },
+  {
+   "id": "S-111",
+   "title_ar": "رئيس قسم التمكين الرقمي وذكاء الأعمال",
+   "title_en": "Head of Digital Enablement & BI",
+   "org_unit_id": "O-111",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1840",
+    "arabic_name": "منى عبدالله القحطاني",
+    "english_name": "Mona Al-Qahtani"
+   }
+  },
+  {
+   "id": "S-1111",
+   "title_ar": "محلل بيانات أول",
+   "title_en": "Senior Data Analyst",
+   "org_unit_id": "O-111",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2101",
+    "arabic_name": "أحمد بن سعود الدوسري",
+    "english_name": "Ahmed Al-Dosari"
+   }
+  },
+  {
+   "id": "S-1112",
+   "title_ar": "أخصائي تحليل أعمال",
+   "title_en": "Business Analyst",
+   "org_unit_id": "O-111",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2188",
+    "arabic_name": "سارة يوسف عبدالله",
+    "english_name": "Sara Abdullah"
+   }
+  },
+  {
+   "id": "S-1113",
+   "title_ar": "مطور تطبيقات",
+   "title_en": "Application Developer",
+   "org_unit_id": "O-111",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2203",
+    "arabic_name": "فهد ناصر العجمي",
+    "english_name": "Fahad Al-Ajmi"
+   }
+  },
+  {
+   "id": "S-1114",
+   "title_ar": "أخصائي نظم",
+   "title_en": "Systems Specialist",
+   "org_unit_id": "O-111",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2251",
+    "arabic_name": "خالد بن ناصر السبيعي",
+    "english_name": "Khalid Al-Subaie"
+   }
+  },
+  {
+   "id": "S-112",
+   "title_ar": "رئيس قسم البيانات ولوحات المعلومات والتقارير",
+   "title_en": "Head of Data, Dashboards & Reports",
+   "org_unit_id": "O-112",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1008",
+    "arabic_name": "عمر المسعي",
+    "english_name": "Omar Al-Musai"
+   }
+  },
+  {
+   "id": "S-120",
+   "title_ar": "مدير إدارة الشؤون المالية",
+   "title_en": "Director, Financial Affairs",
+   "org_unit_id": "O-120",
+   "holder": null,
+   "deputy_position_id": "S-121"
+  },
+  {
+   "id": "S-121",
+   "title_ar": "رئيس قسم الرواتب",
+   "title_en": "Head of Payroll",
+   "org_unit_id": "O-121",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1420",
+    "arabic_name": "بدر بن سالم القحطاني",
+    "english_name": "Badr Al-Qahtani"
+   }
+  },
+  {
+   "id": "S-1211",
+   "title_ar": "أخصائي رواتب",
+   "title_en": "Payroll Specialist",
+   "org_unit_id": "O-121",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2275",
+    "arabic_name": "ريم بنت خالد الزهراني",
+    "english_name": "Reem Al-Zahrani"
+   }
+  },
+  {
+   "id": "S-122",
+   "title_ar": "رئيس قسم الانتدابات والاستحقاقات",
+   "title_en": "Head of Assignments & Entitlements",
+   "org_unit_id": "O-122",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1705",
+    "arabic_name": "نايف بن عبدالله الحارثي",
+    "english_name": "Nayef Al-Harthi"
+   }
+  },
+  {
+   "id": "S-130",
+   "title_ar": "مدير إدارة المشتريات",
+   "title_en": "Director, Procurement",
+   "org_unit_id": "O-130",
+   "holder": null,
+   "deputy_position_id": null
+  },
+  {
+   "id": "S-1301",
+   "title_ar": "أخصائي المشتريات والمستودعات",
+   "title_en": "Procurement & Stores Specialist",
+   "org_unit_id": "O-130",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2044",
+    "arabic_name": "ماجد سالم العمري",
+    "english_name": "Majed Al-Amri"
+   }
+  },
+  {
+   "id": "S-1302",
+   "title_ar": "أمين المستودع العام",
+   "title_en": "General Store Keeper",
+   "org_unit_id": "O-131",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2402",
+    "arabic_name": "يوسف بن حمد الغامدي",
+    "english_name": "Yousef Al-Ghamdi"
+   }
+  },
+  {
+   "id": "S-123",
+   "title_ar": "رئيس قسم الموازنة",
+   "title_en": "Head of Budget",
+   "org_unit_id": "O-123",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1633",
+    "arabic_name": "لمياء بنت عبدالله السديري",
+    "english_name": "Lamia Al-Sudairi"
+   }
+  },
+  {
+   "id": "S-140",
+   "title_ar": "مدير إدارة تقنية المعلومات",
+   "title_en": "Director, Information Technology",
+   "org_unit_id": "O-140",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1290",
+    "arabic_name": "محمد بن سعد الجبر",
+    "english_name": "Mohammed Al-Jabr"
+   }
+  },
+  {
+   "id": "S-1401",
+   "title_ar": "أخصائي دعم تقني",
+   "title_en": "Technical Support Specialist",
+   "org_unit_id": "O-140",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2330",
+    "arabic_name": "عبدالعزيز بن خالد المطيري",
+    "english_name": "Abdulaziz Al-Mutairi"
+   }
+  },
+  {
+   "id": "S-1402",
+   "title_ar": "أمين المستودع التقني",
+   "title_en": "Technical Store Keeper",
+   "org_unit_id": "O-141",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2377",
+    "arabic_name": "حسن بن علي العلي",
+    "english_name": "Hassan Al-Ali"
+   }
+  },
+  {
+   "id": "S-150",
+   "title_ar": "مدير إدارة الخدمات العامة",
+   "title_en": "Director, General Services",
+   "org_unit_id": "O-150",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1355",
+    "arabic_name": "فيصل بن ناصر الدوسري",
+    "english_name": "Faisal Al-Dosari"
+   }
+  },
+  {
+   "id": "S-1501",
+   "title_ar": "أخصائي خدمات عامة",
+   "title_en": "General Services Specialist",
+   "org_unit_id": "O-150",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2461",
+    "arabic_name": "منصور بن عبدالله الشهري",
+    "english_name": "Mansour Al-Shehri"
+   }
+  },
+  {
+   "id": "S-160",
+   "title_ar": "مدير إدارة المراسم",
+   "title_en": "Director, Protocol",
+   "org_unit_id": "O-160",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1218",
+    "arabic_name": "طلال بن فهد العنقري",
+    "english_name": "Talal Al-Anqari"
+   }
+  },
+  {
+   "id": "S-170",
+   "title_ar": "مدير الإدارة الإعلامية",
+   "title_en": "Director, Media",
+   "org_unit_id": "O-170",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1266",
+    "arabic_name": "دانة بنت محمد الفهيد",
+    "english_name": "Dana Al-Fuhaid"
+   }
+  },
+  {
+   "id": "S-190",
+   "title_ar": "مسؤول الاستلام والتسليم — مكتب أبوظبي",
+   "title_en": "Receipt & Handover Officer — Abu Dhabi Office",
+   "org_unit_id": "O-190",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2150",
+    "arabic_name": "راشد بن سالم الكعبي",
+    "english_name": "Rashed Al-Kaabi"
+   }
+  },
+  {
+   "id": "S-200",
+   "title_ar": "المدير العام للموارد البشرية",
+   "title_en": "Director General, Human Resources",
+   "org_unit_id": "O-200",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1108",
+    "arabic_name": "هند بنت سعد الراشد",
+    "english_name": "Hind Al-Rashed"
+   }
+  },
+  {
+   "id": "S-210",
+   "title_ar": "مدير إدارة الموارد البشرية",
+   "title_en": "Director, Human Resources",
+   "org_unit_id": "O-210",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1310",
+    "arabic_name": "سلطان بن عبدالعزيز الدخيل",
+    "english_name": "Sultan Al-Dakheel"
+   }
+  },
+  {
+   "id": "S-211",
+   "title_ar": "رئيس قسم شؤون الموظفين",
+   "title_en": "Head of Personnel Affairs",
+   "org_unit_id": "O-211",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1611",
+    "arabic_name": "علي بن أحمد البوعينين",
+    "english_name": "Ali Al-Buainain"
+   }
+  },
+  {
+   "id": "S-2111",
+   "title_ar": "أخصائي أول شؤون موظفين",
+   "title_en": "Senior Personnel Affairs Specialist",
+   "org_unit_id": "O-211",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "1922",
+    "arabic_name": "نورة سعد الحربي",
+    "english_name": "Noura Al-Harbi"
+   }
+  },
+  {
+   "id": "S-2112",
+   "title_ar": "أخصائي شؤون موظفين",
+   "title_en": "Personnel Affairs Specialist",
+   "org_unit_id": "O-211",
+   "deputy_position_id": null,
+   "holder": {
+    "employee_no": "2310",
+    "arabic_name": "تركي بن محمد العنزي",
+    "english_name": "Turki Al-Anazi"
+   }
+  }
+ ],
+ "employees": [
+  {
+   "employee_no": "2101",
+   "arabic_name": "أحمد بن سعود الدوسري",
+   "english_name": "Ahmed Al-Dosari",
+   "gender": "m",
+   "position_id": "S-1111",
+   "hire_date": "2023-01-01",
+   "sap_user": "U2101",
+   "key": "P-AHMED"
+  },
+  {
+   "employee_no": "1840",
+   "arabic_name": "منى عبدالله القحطاني",
+   "english_name": "Mona Al-Qahtani",
+   "gender": "f",
+   "position_id": "S-111",
+   "hire_date": "2016-01-10",
+   "sap_user": "U1840",
+   "key": "P-MONA"
+  },
+  {
+   "employee_no": "1922",
+   "arabic_name": "نورة سعد الحربي",
+   "english_name": "Noura Al-Harbi",
+   "gender": "f",
+   "position_id": "S-2111",
+   "hire_date": "2019-09-01",
+   "sap_user": "U1922",
+   "key": "P-NOURA"
+  },
+  {
+   "employee_no": "2044",
+   "arabic_name": "ماجد سالم العمري",
+   "english_name": "Majed Al-Amri",
+   "gender": "m",
+   "position_id": "S-1301",
+   "hire_date": "2021-05-01",
+   "sap_user": "U2044",
+   "key": "P-MAJED"
+  },
+  {
+   "employee_no": "2188",
+   "arabic_name": "سارة يوسف عبدالله",
+   "english_name": "Sara Abdullah",
+   "gender": "f",
+   "position_id": "S-1112",
+   "hire_date": "2025-02-15",
+   "sap_user": "U2188",
+   "key": "P-SARA"
+  },
+  {
+   "employee_no": "2203",
+   "arabic_name": "فهد ناصر العجمي",
+   "english_name": "Fahad Al-Ajmi",
+   "gender": "m",
+   "position_id": "S-1113",
+   "hire_date": "2022-10-01",
+   "sap_user": "U2203",
+   "key": "P-FAHAD"
+  },
+  {
+   "employee_no": "2251",
+   "arabic_name": "خالد بن ناصر السبيعي",
+   "english_name": "Khalid Al-Subaie",
+   "gender": "m",
+   "position_id": "S-1114",
+   "hire_date": "2024-07-01",
+   "sap_user": "U2251",
+   "key": "P-KHALID"
+  },
+  {
+   "employee_no": "1502",
+   "arabic_name": "عبدالرحمن بن فهد الشمري",
+   "english_name": "Abdulrahman Al-Shammari",
+   "gender": "m",
+   "position_id": "S-110",
+   "hire_date": "2012-03-01",
+   "sap_user": "U1502",
+   "key": "P-DEPT"
+  },
+  {
+   "employee_no": "1101",
+   "arabic_name": "عبدالله بن محمد العتيبي",
+   "english_name": "Abdullah Al-Otaibi",
+   "gender": "m",
+   "position_id": "S-100",
+   "hire_date": "2008-01-01",
+   "sap_user": "U1101",
+   "key": "P-GM"
+  },
+  {
+   "employee_no": "1108",
+   "arabic_name": "هند بنت سعد الراشد",
+   "english_name": "Hind Al-Rashed",
+   "gender": "f",
+   "position_id": "S-200",
+   "hire_date": "2010-06-01",
+   "sap_user": "U1108",
+   "key": "P-HRGM"
+  },
+  {
+   "employee_no": "1310",
+   "arabic_name": "سلطان بن عبدالعزيز الدخيل",
+   "english_name": "Sultan Al-Dakheel",
+   "gender": "m",
+   "position_id": "S-210",
+   "hire_date": "2013-09-01",
+   "sap_user": "U1310",
+   "key": "P-HRDM"
+  },
+  {
+   "employee_no": "1611",
+   "arabic_name": "علي بن أحمد البوعينين",
+   "english_name": "Ali Al-Buainain",
+   "gender": "m",
+   "position_id": "S-211",
+   "hire_date": "2015-04-01",
+   "sap_user": "U1611",
+   "key": "P-HRSH"
+  },
+  {
+   "employee_no": "2310",
+   "arabic_name": "تركي بن محمد العنزي",
+   "english_name": "Turki Al-Anazi",
+   "gender": "m",
+   "position_id": "S-2112",
+   "hire_date": "2024-01-15",
+   "sap_user": "U2310",
+   "key": "P-HRS2"
+  },
+  {
+   "employee_no": "1420",
+   "arabic_name": "بدر بن سالم القحطاني",
+   "english_name": "Badr Al-Qahtani",
+   "gender": "m",
+   "position_id": "S-121",
+   "hire_date": "2014-02-01",
+   "sap_user": "U1420",
+   "key": "P-PAYM"
+  },
+  {
+   "employee_no": "2275",
+   "arabic_name": "ريم بنت خالد الزهراني",
+   "english_name": "Reem Al-Zahrani",
+   "gender": "f",
+   "position_id": "S-1211",
+   "hire_date": "2023-08-01",
+   "sap_user": "U2275",
+   "key": "P-PAYS"
+  },
+  {
+   "employee_no": "1705",
+   "arabic_name": "نايف بن عبدالله الحارثي",
+   "english_name": "Nayef Al-Harthi",
+   "gender": "m",
+   "position_id": "S-122",
+   "hire_date": "2017-11-01",
+   "sap_user": "U1705",
+   "key": "P-FIN"
+  },
+  {
+   "employee_no": "1003",
+   "arabic_name": "سعود بن عبدالله المنصور",
+   "english_name": "Saud Al-Mansour",
+   "gender": "m",
+   "position_id": "S-300",
+   "hire_date": "2005-01-01",
+   "sap_user": "U1003",
+   "key": "P-ASG"
+  },
+  {
+   "employee_no": "2402",
+   "arabic_name": "يوسف بن حمد الغامدي",
+   "english_name": "Yousef Al-Ghamdi",
+   "gender": "m",
+   "position_id": "S-1302",
+   "hire_date": "2020-03-01",
+   "sap_user": "U2402",
+   "key": "P-STORE1"
+  },
+  {
+   "employee_no": "1633",
+   "arabic_name": "لمياء بنت عبدالله السديري",
+   "english_name": "Lamia Al-Sudairi",
+   "gender": "f",
+   "position_id": "S-123",
+   "hire_date": "2014-09-01",
+   "sap_user": "U1633",
+   "key": "P-BUDG"
+  },
+  {
+   "employee_no": "1290",
+   "arabic_name": "محمد بن سعد الجبر",
+   "english_name": "Mohammed Al-Jabr",
+   "gender": "m",
+   "position_id": "S-140",
+   "hire_date": "2011-01-01",
+   "sap_user": "U1290",
+   "key": "P-ITM"
+  },
+  {
+   "employee_no": "2330",
+   "arabic_name": "عبدالعزيز بن خالد المطيري",
+   "english_name": "Abdulaziz Al-Mutairi",
+   "gender": "m",
+   "position_id": "S-1401",
+   "hire_date": "2023-04-01",
+   "sap_user": "U2330",
+   "key": "P-ITS"
+  },
+  {
+   "employee_no": "2377",
+   "arabic_name": "حسن بن علي العلي",
+   "english_name": "Hassan Al-Ali",
+   "gender": "m",
+   "position_id": "S-1402",
+   "hire_date": "2022-01-15",
+   "sap_user": "U2377",
+   "key": "P-STORE2"
+  },
+  {
+   "employee_no": "1355",
+   "arabic_name": "فيصل بن ناصر الدوسري",
+   "english_name": "Faisal Al-Dosari",
+   "gender": "m",
+   "position_id": "S-150",
+   "hire_date": "2012-06-01",
+   "sap_user": "U1355",
+   "key": "P-GSM"
+  },
+  {
+   "employee_no": "2461",
+   "arabic_name": "منصور بن عبدالله الشهري",
+   "english_name": "Mansour Al-Shehri",
+   "gender": "m",
+   "position_id": "S-1501",
+   "hire_date": "2024-02-01",
+   "sap_user": "U2461",
+   "key": "P-GSS"
+  },
+  {
+   "employee_no": "1218",
+   "arabic_name": "طلال بن فهد العنقري",
+   "english_name": "Talal Al-Anqari",
+   "gender": "m",
+   "position_id": "S-160",
+   "hire_date": "2010-10-01",
+   "sap_user": "U1218",
+   "key": "P-PROTM"
+  },
+  {
+   "employee_no": "1266",
+   "arabic_name": "دانة بنت محمد الفهيد",
+   "english_name": "Dana Al-Fuhaid",
+   "gender": "f",
+   "position_id": "S-170",
+   "hire_date": "2013-03-01",
+   "sap_user": "U1266",
+   "key": "P-MEDM"
+  },
+  {
+   "employee_no": "2150",
+   "arabic_name": "راشد بن سالم الكعبي",
+   "english_name": "Rashed Al-Kaabi",
+   "gender": "m",
+   "position_id": "S-190",
+   "hire_date": "2019-05-01",
+   "sap_user": "U2150",
+   "key": "P-AUH"
+  },
+  {
+   "employee_no": "1008",
+   "arabic_name": "عمر المسعي",
+   "english_name": "Omar Al-Musai",
+   "gender": "m",
+   "position_id": "S-112",
+   "hire_date": "2015-01-01",
+   "sap_user": "U1008",
+   "key": "P-OMAR"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+import { chromium } from '/home/claude/.npm-global/lib/node_modules/playwright/index.mjs';
+import path from 'node:path';
+const file = 'file://' + path.resolve('dist/index.html');
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+const p = await ctx.newPage();
+await p.goto(file + '#/home', { waitUntil: 'load' }); await p.waitForTimeout(800);
+await p.evaluate(() => { const s = JSON.parse(localStorage.getItem('usp-portal-v1')); s.settings.persona = 'admin'; localStorage.setItem('usp-portal-v1', JSON.stringify(s)); });
+await p.goto(file + '#/admin/policy', { waitUntil: 'load' }); await p.reload({ waitUntil: 'load' }); await p.waitForTimeout(1200);
+await p.locator('.segmented button', { hasText: 'المحاكاة' }).click(); await p.waitForTimeout(600);
+await p.locator('.select-in').first().selectOption('P-SARA'); await p.locator('.select-in').nth(1).selectOption('sick');
+await p.locator('input[type="date"]').first().fill('2026-09-20'); await p.locator('input[type="date"]').nth(1).fill('2026-09-24');
+await p.locator('.btn.primary', { hasText: 'شغّل' }).click(); await p.waitForTimeout(1500);
+const info = await p.evaluate(() => { const e = document.querySelector('.swatch.used'); const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); const rules = []; for (const sh of document.styleSheets) { try { for (const rule of sh.cssRules) { if (rule.selectorText && e.matches(rule.selectorText)) rules.push(rule.selectorText + ' {' + rule.style.cssText + '}'); } } catch {} } return { w: r.width, h: r.height, display: cs.display, rules }; });
+console.log(JSON.stringify(info, null, 1));
+await b.close();

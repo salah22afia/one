@@ -1,0 +1,126 @@
+/* v0.17 «النظرة العميقة» (P-14، تعليمة عمر: «واضحة وسهلة حتى لطفل صغير ولمن في التسعين»):
+   إصلاحات وجدها التدقيق بالعين وبالكواشف الآلية (scripts/v17-deeplook.mjs) على الهاتف والحاسوب بلغتين وفي الوضعين — يُحمَّل آخر الأنماط فيغلب ما قبله. */
+
+/* ——— 1) الحلقات لا تُقصّ أبداً: تتقلص مع خليتها بدل أن تخرج منها (أرصدتي على 360–390px، والرأس) ——— */
+.ringtile { padding: 12px 6px 10px; gap: 6px; }
+.ringtile .ring { width: 100% !important; max-width: 84px; height: auto !important; aspect-ratio: 1 / 1; }
+.ringtile .ring svg { width: 100%; height: 100%; }
+.ringtile .ring-c { font-size: clamp(0.95rem, 5.2cqw, 1.15rem); }
+.ringtile > span { font-size: var(--t-cap); font-weight: 700; color: var(--fg-2); line-height: 1.3; text-wrap: balance; }
+.ringtile > span small { font-size: 11px; }
+.tiles.rings { container-type: inline-size; }
+
+/* ——— 2) ودجات «لي»: الرقم الكبير كان يرث حجم السطر الصغير (اصطياد المحدِّد .wg-txt span) ——— */
+.wg-txt > span { font-size: var(--t-cap); color: var(--fg-2); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wg-txt > small { font-size: 11px; color: var(--fg-3); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wg-txt .wg-big { font-size: 1.7rem !important; line-height: 1.1 !important; color: var(--tint); display: block; white-space: nowrap; overflow: visible; }
+.wg-txt .wg-big .tk { font: inherit; }
+.wg-txt .wg-big small { font-size: var(--t-sub); color: var(--fg-3); font-weight: 700; }
+
+/* ——— 3) الأرقام والتواريخ والرموز لا تنكسر في منتصفها (REQ-2026-0386 · 2026-12-20) ——— */
+.nb { white-space: nowrap; direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+.mono, .cell-code { white-space: nowrap; }
+
+/* ——— 4) شريط الخطوات في رأس الطلب: نقاط على خط، والحالية بهالة، وجملة «بعدها: …» بدل عناوين مقصوصة 10.5px ——— */
+.stp { display: flex; align-items: center; gap: 0; margin: 14px 0 0; padding: 4px 2px 0; overflow: visible; }
+.stp li { flex: 1 1 0; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 0; }
+.stp li::after { content: ""; flex: 1; height: 3px; border-radius: 2px; background: var(--bg-inset-2); margin: 0 3px; }
+.stp li:last-child { flex: none; }
+.stp li:last-child::after { display: none; }
+.stp li.done::after { background: var(--green); }
+.stp li.cur::after, .stp li.ret::after, .stp li.rej::after { background: var(--bg-inset-2); }
+.stp-dot { width: 24px; height: 24px; flex: none; }
+.stp.many .stp-dot { width: 14px; height: 14px; }
+.stp.many .stp-dot svg { display: none; }
+.stp.many li.cur .stp-dot::after { inset: 4px; }
+.stp.many li::after { margin: 0 2px; }
+.stp-t { display: none; }
+.stp-next { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: var(--t-foot); color: var(--fg-2); line-height: 1.45; }
+.stp-next b { color: var(--fg); font-weight: 700; }
+.stp-next svg { width: 14px; height: 14px; flex: none; color: var(--fg-3); }
+@container app (min-width: 900px) {
+  .stp.labels { align-items: flex-start; }
+  .stp.labels li { flex-direction: column; align-items: center; gap: 6px; position: relative; }
+  .stp.labels li::after { position: absolute; top: 10.5px; inset-inline-start: calc(50% + 15px); inset-inline-end: calc(-50% + 15px); margin: 0; }
+  .stp.labels li:last-child { flex: 1 1 0; }
+  .stp.labels .stp-t { display: -webkit-box; font-size: 12px; text-align: center; padding: 0 4px; max-width: 160px; }
+}
+
+/* ——— 5) صف المهمة والطلب على الهاتف: السطر الثاني يلتف والرقاقة تتبعه بدل قصّ «منذ ي…» ——— */
+@container app (max-width: 899px) {
+  /* v0.18: النص يلتف على سطرين على الأكثر، والرقاقة بجانبه إن اتّسع السطر وإلا نزلت تحته — لا تُقصّ أبداً (كانت تختفي حين يطول النص إلى ثلاثة أسطر بالإنجليزية) */
+  .lrow-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; line-height: 1.5; overflow: visible; }
+  .lrow-line > span:not(.pill) { flex: 1 1 180px; min-width: 0; white-space: normal; overflow: hidden; text-overflow: clip; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .lrow-line .pill { display: inline-flex; flex: none; margin: 0; white-space: nowrap; }
+  .lrow-txt > span:not(.lrow-line) { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}
+
+/* ——— 6) مجالات «الخدمات»: الاسم كاملاً (ثلاثة أسطر) لا بنقاط ——— */
+.dm-txt b { -webkit-line-clamp: 3; font-size: 13.5px; }
+.dm { min-height: 64px; }
+
+/* ——— 7) حقل «مدة» في النماذج المهيّأة: التاريخان لا يفيضان عن الخلية ——— */
+.cf-range { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cf-range input { min-width: 0; width: 100%; }
+@container app (max-width: 420px) { .cf-range { grid-template-columns: minmax(0, 1fr); } }
+
+/* ——— 8) صفوف المكاتب على الهاتف: المرجع تحت العنوان لا بجانبه ——— */
+@container app (max-width: 640px) {
+  .desk-row { flex-wrap: wrap; }
+  .desk-row .dr-main { flex: 1 1 calc(100% - 52px); }
+  .desk-row .dr-trail { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px 8px; padding-inline-start: 52px; }
+}
+
+/* ——— 9) العنوان مع رمزه: الرمز سطر مستقل على الهاتف (عقود التكامل، السجلات، الدليل) ——— */
+@container app (max-width: 640px) {
+  .cell-title .cell-code { display: block; margin-inline-start: 0; margin-top: 2px; width: fit-content; }
+}
+
+/* ——— 10) شرائط البطاقات على الهاتف: بطاقة كاملة تليها بطاقة تطلّ — قصداً لا قصّاً ——— */
+@media (max-width: 759px) {
+  .ptl { grid-auto-columns: min(82%, 320px); scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); }
+}
+
+/* ——— 11) ألسنة المصمّم على الحاسوب تلتف بدل أن تُقصّ؛ وعلى الهاتف تُمرَّر ——— */
+@container app (min-width: 900px) { .dzs-main > .segmented { flex-wrap: wrap; overflow: visible; } .dzs-main > .segmented > button { flex: 1 1 auto; } }
+
+/* ——— 12) أهداف اللمس: الروابط النصية والرقاقات المرشِّحة لا تقل عن 36 نقطة على اللمس ——— */
+@media (pointer: coarse) {
+  .lb-link { min-height: 36px; display: inline-flex; align-items: center; padding: 6px 4px; margin: -6px -4px; }
+  .lb-link.chip { margin: 0; }
+  button.pill, a.pill, label.pill { min-height: 34px; padding-block: 6px; }
+  .fc-latest-x, .chip-x { min-width: 34px; min-height: 34px; }
+}
+
+/* ——— 13) لا نص أصغر من 11px في شاشات الموظف ——— */
+.pc-rowack .pill, .pc.row .pc-meta .pill, .wg-req .pill { font-size: 11px; }
+.pass-field small, .pass-org { font-size: 11px; }
+.ringtile > span small { font-size: 11px; }
+
+/* ——— 14) حجم النص من الإعدادات (ثلاث درجات) ——— */
+:root[data-text="large"] { font-size: 108%; }
+:root[data-text="xl"] { font-size: 118%; }
+:root[data-text="large"] .lb-tabbar, :root[data-text="xl"] .lb-tabbar { font-size: 0.72rem; }
+
+/* ——— 15) العدّ العربي: «يوم عمل واحد» بدل «1 أيام عمل» يأتي من الشيفرة (i18n.countText) ——— */
+
+/* ——— 16) دليل المصمّم على الهاتف: رأس المجال زرّ يطوي ويفتح ——— */
+.dz-domhead { width: 100%; text-align: start; color: inherit; cursor: pointer; }
+.dz-domhead .lb-chev { width: 18px; height: 18px; color: var(--fg-3); transition: transform var(--dur-fast); }
+.dz-domhead .lb-chev.up { transform: rotate(180deg); }
+.dz-domhead.folded { opacity: 0.85; }
+
+/* ——— 17) صفوف الإعدادات: المفتاح المجزّأ ينزل تحت العنوان على الهاتف (كان يزاحم «Appearance» بالإنجليزية) ——— */
+.set-row { flex-wrap: wrap; row-gap: 8px; }
+@container app (max-width: 640px) { .set-row .cell-trail { flex: 1 1 100%; padding-inline-start: 52px; justify-content: flex-start; } .set-row .cell-trail .segmented { width: 100%; } }
+
+/* ——— 18) رقاقة «يتطلب تأكيد الاطلاع» على غلاف الخبر الصغير: لا تخرج عن الغلاف بالإنجليزية ——— */
+.pc-ack { max-width: calc(100% - 20px); }
+.pc-ack .pill { max-width: 100%; overflow: hidden; text-overflow: ellipsis; display: inline-flex; }
+.pc-ack .pill > svg { flex: none; }
+
+/* ——— 19) «يحتاجك»: السطر الثاني سطران كاملان لا «026.2…» مقصوصة في منتصف رقم ——— */
+.fc-txt span { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* ——— 20) v0.18: الرقاقات الطويلة في صفوف المصمّم والعقود والسجلات على الهاتف تلتف بدل أن تُقصّ عند حافة البطاقة ——— */
+@container app (max-width: 640px) { .dz-row-meta .pill { max-width: 100%; white-space: normal; text-align: start; line-height: 1.45; } }

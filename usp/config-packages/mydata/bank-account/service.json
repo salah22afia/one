@@ -1,0 +1,151 @@
+{
+  "id": "MD-02",
+  "module": "mydata",
+  "feature": "bank-account",
+  "version": 1,
+  "name": {
+    "ar": "تغيير الحساب البنكي",
+    "en": "Change salary account"
+  },
+  "fields": [
+    {
+      "key": "bank",
+      "type": "select",
+      "label": {
+        "ar": "البنك",
+        "en": "Bank"
+      },
+      "required": true,
+      "options": [
+        {
+          "value": "rajhi",
+          "label": {
+            "ar": "مصرف الراجحي",
+            "en": "Al Rajhi Bank"
+          }
+        },
+        {
+          "value": "snb",
+          "label": {
+            "ar": "البنك الأهلي",
+            "en": "SNB"
+          }
+        },
+        {
+          "value": "riyad",
+          "label": {
+            "ar": "بنك الرياض",
+            "en": "Riyad Bank"
+          }
+        },
+        {
+          "value": "other",
+          "label": {
+            "ar": "بنك آخر",
+            "en": "Other"
+          }
+        }
+      ]
+    },
+    {
+      "key": "otherBank",
+      "type": "text",
+      "label": {
+        "ar": "اسم البنك",
+        "en": "Bank name"
+      },
+      "required": true,
+      "visibleWhen": {
+        "==": [
+          {
+            "var": "bank"
+          },
+          "other"
+        ]
+      }
+    },
+    {
+      "key": "iban",
+      "type": "iban",
+      "label": {
+        "ar": "الآيبان الجديد",
+        "en": "New IBAN"
+      },
+      "required": true,
+      "pattern": "^SA\\d{22}$",
+      "help": {
+        "ar": "يبدأ بـ SA ويتكون من 24 خانة",
+        "en": "Starts with SA, 24 characters"
+      }
+    },
+    {
+      "key": "bankLetter",
+      "type": "attachment",
+      "label": {
+        "ar": "خطاب تعريف بالحساب من البنك",
+        "en": "Account letter from the bank"
+      },
+      "required": true
+    }
+  ],
+  "form": {
+    "pages": [
+      {
+        "title": {
+          "ar": "الحساب الجديد",
+          "en": "New account"
+        },
+        "fields": [
+          "bank",
+          "otherBank",
+          "iban",
+          "bankLetter"
+        ]
+      }
+    ]
+  },
+  "rules": [],
+  "workflow": {
+    "steps": [
+      {
+        "key": "verify",
+        "title": {
+          "ar": "تحقق شؤون الموظفين من المستند البنكي",
+          "en": "Personnel affairs verifies the bank document"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-211"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "payroll",
+        "title": {
+          "ar": "تأكيد ثانٍ من الرواتب",
+          "en": "Second confirmation by payroll"
+        },
+        "mode": "approve",
+        "agent": {
+          "kind": "pool",
+          "unitId": "O-121"
+        },
+        "slaHours": 48
+      },
+      {
+        "key": "post",
+        "title": {
+          "ar": "تحديث حساب الراتب",
+          "en": "Salary account updated"
+        },
+        "mode": "system",
+        "operation": "sap.pa.updateBank"
+      }
+    ]
+  },
+  "next": {
+    "ar": "تتحقق شؤون الموظفين من المستند، ثم تؤكد الرواتب، ثم يُطبَّق على الراتب القادم.",
+    "en": "Personnel affairs verify the document, payroll confirms, then it applies to the next salary."
+  }
+}

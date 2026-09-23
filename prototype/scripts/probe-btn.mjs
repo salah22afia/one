@@ -1,0 +1,17 @@
+import { chromium } from '/home/claude/.npm-global/lib/node_modules/playwright/index.mjs';
+import path from 'node:path';
+const file = 'file://' + path.resolve('dist/index.html');
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 400, height: 860 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+const p = await ctx.newPage();
+await p.goto(file + '#/new/TM-01', { waitUntil: 'load' }); await p.waitForTimeout(1200);
+await p.locator('.type-card').first().click(); await p.waitForTimeout(1000);
+await p.locator('.btn.primary.block').click(); await p.waitForTimeout(800);
+await p.locator('.cal-head .icon-btn[aria-label="next"]').click(); await p.waitForTimeout(400); await p.locator('.cal-head .icon-btn[aria-label="next"]').click(); await p.waitForTimeout(400);
+await p.locator('.cal-day', { hasText: /^1$/ }).first().click(); await p.locator('.cal-day', { hasText: /^5$/ }).first().click(); await p.waitForTimeout(1200);
+await p.locator('.btn.primary.block').click(); await p.waitForTimeout(800);
+await p.locator('.btn.primary.block').click(); await p.waitForTimeout(2500);
+const info = await p.evaluate(() => { const b = document.querySelector('.btn.primary.block'); const r = b.getBoundingClientRect(); const cs = getComputedStyle(b); const svg = b.querySelector('svg')?.getBoundingClientRect(); const range = document.createRange(); range.selectNodeContents(b); const tr = range.getBoundingClientRect(); return { btn: [r.top, r.height], svg: svg && [svg.top, svg.height], text: [tr.top, tr.height], lh: cs.lineHeight, fs: cs.fontSize, display: cs.display, ai: cs.alignItems, pad: cs.padding, transform: cs.transform, parent: getComputedStyle(b.parentElement).transform, overflow: getComputedStyle(b.parentElement).overflow }; });
+console.log(info);
+await p.locator('.btn.primary.block').screenshot({ path: 'dist/v4-probe-btn.png' });
+await b.close();

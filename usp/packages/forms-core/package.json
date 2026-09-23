@@ -1,0 +1,11 @@
+{
+  "name": "@usp/forms-core",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": { "typecheck": "tsc -p .", "test": "vitest run" },
+  "dependencies": { "@usp/i18n": "workspace:*", "json-logic-js": "^2.0.5" },
+  "devDependencies": { "@types/json-logic-js": "^2.0.8", "vitest": "^5.0.1" }
+}

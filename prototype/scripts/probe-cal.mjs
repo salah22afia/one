@@ -1,0 +1,15 @@
+import { chromium } from '/home/claude/.npm-global/lib/node_modules/playwright/index.mjs';
+import path from 'node:path';
+const file = 'file://' + path.resolve('dist/index.html');
+const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const ctx = await b.newContext({ viewport: { width: 400, height: 860 }, deviceScaleFactor: 3, hasTouch: true, isMobile: true });
+const p = await ctx.newPage();
+await p.goto(file + '#/new/TM-01', { waitUntil: 'load' }); await p.waitForTimeout(1200);
+await p.locator('.type-card').first().click(); await p.waitForTimeout(600);
+await p.locator('.btn.primary.block').click(); await p.waitForTimeout(800);
+await p.locator('.cal-day', { hasText: /^20$/ }).click(); await p.waitForTimeout(300);
+await p.locator('.cal-day', { hasText: /^24$/ }).click(); await p.waitForTimeout(1000);
+const info = await p.evaluate(() => { const els = [...document.querySelectorAll('.cal-day.sel')]; return els.map((e) => { const cs = getComputedStyle(e); return { cls: e.className, bg: cs.backgroundColor, color: cs.color, html: e.innerHTML, td: cs.textDecoration, transform: cs.transform, br: cs.borderRadius }; }); });
+console.log(JSON.stringify(info, null, 1));
+await p.locator('.cal').screenshot({ path: 'dist/v4-probe-cal.png' });
+await b.close();
